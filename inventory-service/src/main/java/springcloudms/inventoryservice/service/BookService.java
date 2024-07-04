@@ -1,13 +1,20 @@
 package springcloudms.inventoryservice.service;
 
-import springcloudms.inventoryservice.model.BookProduct;
-import springcloudms.inventoryservice.model.dto.BookCreationDTO;
+import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-public interface BookService extends AbstractService<BookProduct, Long> {
-    void saveBook(BookCreationDTO bookProductDTO) throws ExecutionException, InterruptedException;
-    void saveAll(List<BookProduct> bookProducts);
-    List<BookProduct> findAll();
+public interface BookService extends AbstractService<BookResponseDTO, Long> {
+    void saveBook(BookResponseDTO bookProductDTO) throws ExecutionException, InterruptedException;
+
+    void saveAll(List<BookEntity> bookEntities);
+
+    List<BookResponseDTO> findAll();
+
+    Optional<BookResponseDTO> findByArticleNo(String articleNo);
+
+    Boolean deleteByArticleNo(String articleNo);
 }

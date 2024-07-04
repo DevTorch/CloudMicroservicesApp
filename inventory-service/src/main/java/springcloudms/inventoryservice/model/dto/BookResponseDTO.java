@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
-public record BookCreationDTO(
+public record BookResponseDTO(
         String articleNo,
         ProductTypeEnum productType,
         @NotNull String title,
@@ -23,7 +23,7 @@ public record BookCreationDTO(
         @NotNull BigDecimal purchasePrice
 ) implements Serializable {
 
-        public BookCreationDTO(String articleNo, ProductTypeEnum productType, String title, String author, String publisher, String isbnNo, WarehousesEnum warehouse, Integer quantity, BigDecimal purchasePrice) {
+        public BookResponseDTO(String articleNo, ProductTypeEnum productType, String title, String author, String publisher, String isbnNo, WarehousesEnum warehouse, Integer quantity, BigDecimal purchasePrice) {
                 this.articleNo = UUID.randomUUID().toString();
                 this.productType = ProductTypeEnum.BOOKS;
                 this.title = title;

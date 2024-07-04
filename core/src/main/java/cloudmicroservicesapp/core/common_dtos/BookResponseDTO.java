@@ -1,13 +1,13 @@
-package cloudmicroservicesapp.core;
+package cloudmicroservicesapp.core.common_dtos;
 
 import cloudmicroservicesapp.core.enums.ProductTypeEnum;
 import cloudmicroservicesapp.core.enums.WarehousesEnum;
-import lombok.Builder;
 
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-@Builder
-public record AddNewBookEvent(
+public record BookResponseDTO(
         String articleNo,
         ProductTypeEnum productType,
         String title,
@@ -17,5 +17,5 @@ public record AddNewBookEvent(
         WarehousesEnum warehouse,
         Integer quantity,
         BigDecimal purchasePrice
-) {
+) implements Serializable {
 }

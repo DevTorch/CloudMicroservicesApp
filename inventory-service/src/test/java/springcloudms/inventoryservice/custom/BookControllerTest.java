@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import springcloudms.inventoryservice.model.dto.BookCreationDTO;
+import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -43,7 +43,7 @@ public class BookControllerTest extends CustomizedContextMainTest {
     @Test
     public void shouldAddNewBookFromBookDTO() throws Exception {
 
-        BookCreationDTO bookCreationDTO = new BookCreationDTO(
+        BookResponseDTO bookResponseDTO = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "Harry Potter and the Philosopher's Stone",
@@ -57,7 +57,7 @@ public class BookControllerTest extends CustomizedContextMainTest {
 
         mockMvc.perform(post("/api/books/add")
                         .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(bookCreationDTO))
+                        .content(objectMapper.writeValueAsString(bookResponseDTO))
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.title", is(bookResponseDTO.title())));

@@ -1,23 +1,23 @@
 package springcloudms.inventoryservice.mapper;
 
 import org.springframework.stereotype.Component;
-import springcloudms.inventoryservice.model.BookProduct;
-import springcloudms.inventoryservice.model.dto.BookCreationDTO;
+import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BookMapper implements Mappable<BookProduct, BookCreationDTO> {
+public class BookMapper implements Mappable<BookEntity, BookResponseDTO> {
 
-    public BookProduct toEntity(BookCreationDTO dto) {
+    public BookEntity toEntity(BookResponseDTO dto) {
 
         return mapDtoToEntity(dto);
     }
 
-    public static BookProduct mapDtoToEntity(BookCreationDTO dto) {
-        BookProduct book = new BookProduct();
+    public static BookEntity mapDtoToEntity(BookResponseDTO dto) {
+        BookEntity book = new BookEntity();
         book.setArticleNo(dto.articleNo());
         book.setWarehouse(dto.warehouse());
         book.setQuantity(dto.quantity());
@@ -31,15 +31,15 @@ public class BookMapper implements Mappable<BookProduct, BookCreationDTO> {
         return book;
     }
 
-    public List<BookProduct> toEntities(List<BookCreationDTO> dtos) {
+    public List<BookEntity> toEntities(List<BookResponseDTO> dtos) {
 
         return dtos.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    public BookCreationDTO toDto(BookProduct entity) {
-        return new BookCreationDTO(
+    public BookResponseDTO toDto(BookEntity entity) {
+        return new BookResponseDTO(
                 entity.getArticleNo(),
                 entity.getProductType(),
                 entity.getTitle(),
@@ -52,7 +52,7 @@ public class BookMapper implements Mappable<BookProduct, BookCreationDTO> {
         );
     }
 
-    public List<BookCreationDTO> toDto(List<BookProduct> entities) {
+    public List<BookResponseDTO> toDto(List<BookEntity> entities) {
         return List.of();
     }
 }

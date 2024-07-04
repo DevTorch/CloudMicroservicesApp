@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Schema(description = "DTO-модель продукта")
+@Schema(description = "DTO-модель сущности товара")
 public record ProductRequestDTO(
         @Schema(description = "Артикул продукта")
         String articleNo,

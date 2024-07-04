@@ -1,6 +1,7 @@
 package springcloudms.notificationservice.handler;
 
-import cloudmicroservicesapp.core.AddNewBookEvent;
+
+import cloudmicroservicesapp.core.events.AddNewBookEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;

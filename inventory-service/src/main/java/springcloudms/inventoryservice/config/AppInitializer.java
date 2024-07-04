@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import springcloudms.inventoryservice.mapper.BookMapper;
-import springcloudms.inventoryservice.model.dto.BookCreationDTO;
+import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.service.BookService;
 import springcloudms.inventoryservice.service.InventoryService;
 
@@ -30,7 +30,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
-        BookCreationDTO bookDtoOne = new BookCreationDTO(
+        BookResponseDTO bookDtoOne = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "Lord of the Rings",
@@ -42,7 +42,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("10.00")
         );
 
-        BookCreationDTO bookDtoTwo = new BookCreationDTO(
+        BookResponseDTO bookDtoTwo = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "The Hobbit",
@@ -54,7 +54,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("10.00")
         );
 
-        BookCreationDTO bookDtoThree = new BookCreationDTO(
+        BookResponseDTO bookDtoThree = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "The Fellowship of the Ring",
@@ -66,7 +66,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("100.00")
         );
 
-        BookCreationDTO bookDtoFour = new BookCreationDTO(
+        BookResponseDTO bookDtoFour = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "The Two Towers",
@@ -78,7 +78,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("100.00")
         );
 
-        BookCreationDTO bookDtoFive = new BookCreationDTO(
+        BookResponseDTO bookDtoFive = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "The Return of the King",
@@ -90,7 +90,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("90.00")
         );
 
-        BookCreationDTO bookDtoSix = new BookCreationDTO(
+        BookResponseDTO bookDtoSix = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "The Catcher in the Rye",
@@ -102,7 +102,7 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("50.00")
         );
 
-        List<BookCreationDTO> books = List.of(bookDtoOne, bookDtoTwo, bookDtoThree, bookDtoFour, bookDtoFive, bookDtoSix);
+        List<BookResponseDTO> books = List.of(bookDtoOne, bookDtoTwo, bookDtoThree, bookDtoFour, bookDtoFive, bookDtoSix);
 
 //        books.forEach(System.out::println);
 

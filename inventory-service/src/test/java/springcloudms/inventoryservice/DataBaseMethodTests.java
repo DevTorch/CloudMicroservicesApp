@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import springcloudms.inventoryservice.model.BookProduct;
-import springcloudms.inventoryservice.model.dto.BookCreationDTO;
+import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.repository.BookRepository;
 import springcloudms.inventoryservice.service.BookService;
 
@@ -39,7 +39,7 @@ public class DataBaseMethodTests {
     @Transactional
     void shouldAddNewBook() {
 
-        BookCreationDTO bookCreationDTO = new BookCreationDTO(
+        BookResponseDTO bookResponseDTO = new BookResponseDTO(
                 UUID.randomUUID().toString(),
                 ProductTypeEnum.BOOKS,
                 "Harry Potter and the Philosopher's Stone",
@@ -51,7 +51,7 @@ public class DataBaseMethodTests {
                 new BigDecimal("10.00")
         );
 
-        BookProduct book_one = new BookProduct();
+        BookEntity book_one = new BookEntity();
         book_one.setArticleNo(UUID.randomUUID().toString());
         book_one.setWarehouse(WarehousesEnum.WAREHOUSE_SEATTLE);
         book_one.setQuantity(55);

@@ -1,6 +1,6 @@
 package springcloudms.inventoryservice.service.impl;
 
-import cloudmicroservicesapp.core.AddNewBookEvent;
+import cloudmicroservicesapp.core.events.AddNewBookEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springcloudms.inventoryservice.exception.KafkaSenderException;
 import springcloudms.inventoryservice.mapper.BookMapper;
-import springcloudms.inventoryservice.model.BookProduct;
-import springcloudms.inventoryservice.model.dto.BookCreationDTO;
+import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.repository.BookRepository;
 import springcloudms.inventoryservice.service.BookService;
 
@@ -27,19 +27,20 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final KafkaTemplate<String, AddNewBookEvent> kafkaTemplate;
+    private final BookMapper bookMapper;
 
     @Override
-    public Optional<BookProduct> findById(Long id) {
+    public Optional<BookResponseDTO> findById(Long id) {
         return Optional.empty();
     }
 
     @Override
-    public BookProduct save(BookProduct entity) {
+    public BookResponseDTO save(BookResponseDTO entity) {
         return null;
     }
 
     @Override
-    public BookProduct update(BookProduct entity) {
+    public BookResponseDTO update(BookResponseDTO entity) {
         return null;
     }
 
@@ -55,23 +56,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void saveBook(BookCreationDTO bookCreationDTO) throws ExecutionException, InterruptedException {
+    public void saveBook(BookResponseDTO bookResponseDTO) throws ExecutionException, InterruptedException {
 
-        final BookProduct bookProduct = BookMapper.mapDtoToEntity(bookCreationDTO);
+        final BookEntity bookEntity = BookMapper.mapDtoToEntity(bookResponseDTO);
 
-        bookRepository.save(bookProduct);
-        log.info("Book saved successfully {}: ", bookProduct);
+        bookRepository.save(bookEntity);
+        log.info("Book saved successfully {}: ", bookEntity);
 
         AddNewBookEvent event = new AddNewBookEvent(
-                bookCreationDTO.articleNo(),
-                bookCreationDTO.productType(),
-                bookCreationDTO.title(),
-                bookCreationDTO.author(),
-                bookCreationDTO.publisher(),
-                bookCreationDTO.isbnNo(),
-                bookCreationDTO.warehouse(),
-                bookCreationDTO.quantity(),
-                bookCreationDTO.purchasePrice()
+                bookResponseDTO.articleNo(),
+                bookResponseDTO.productType(),
+                bookResponseDTO.title(),
+                bookResponseDTO.author(),
+                bookResponseDTO.publisher(),
+                bookResponseDTO.isbnNo(),
+                bookResponseDTO.warehouse(),
+                bookResponseDTO.quantity(),
+                bookResponseDTO.purchasePrice()
         );
 
         /* SYNC CALL
@@ -98,13 +99,34 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void saveAll(List<BookProduct> bookProducts) {
-        bookRepository.saveAll(bookProducts);
+    public void saveAll(List<BookEntity> bookEntities) {
+        bookRepository.saveAll(bookEntities);
     }
 
     @Override
-    public List<BookProduct> findAll() {
-        return bookRepository.findAll();
+    public List<BookResponseDTO> findAll() {
+        return bookRepository
+                .findAll()
+                .stream()
+                .map(bookMapper::toDto)
+                .toList();
+    }
+
+    /**
+     * Finds a book by its article number.
+     *
+     * @param articleNo The article number of the book.
+     * @return An optional containing the book, if found, or an empty optional.
+     */
+    @Override
+    public Optional<BookResponseDTO> findByArticleNo(String articleNo) {
+        var book = bookRepository.findByArticleNo(articleNo);
+        return book.map(bookMapper::toDto);
+    }
+
+    @Override
+    public Boolean deleteByArticleNo(String articleNo) {
+        return bookRepository.deleteByArticleNo(articleNo);
     }
 
 }

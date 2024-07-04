@@ -20,7 +20,7 @@ import springcloudms.inventoryservice.model.base.BaseInventoryProductEntity;
 @Table(name = "inventory_books")
 @ToString
 @Builder
-public class BookProduct extends BaseInventoryProductEntity {
+public class BookEntity extends BaseInventoryProductEntity {
 
     private String author;
     private String publisher;
