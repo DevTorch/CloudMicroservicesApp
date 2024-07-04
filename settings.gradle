@@ -1,5 +1,12 @@
 rootProject.name = 'CloudMicroservicesApp'
 
 include 'core'
-include 'notification-service'
+include 'api-gateway'
+include 'auth-service'
+include 'customer-service'
+include 'discovery-server'
 include 'inventory-service'
+include 'kafka-server'
+include 'notification-service'
+include 'order-service'
+include 'product-service'

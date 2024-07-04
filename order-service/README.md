@@ -1,0 +1,6 @@
+- PostgreSQL
+- Docker Compose
+- Flyway
+- TestContainers
+- Rest Assured
+- Wiremock

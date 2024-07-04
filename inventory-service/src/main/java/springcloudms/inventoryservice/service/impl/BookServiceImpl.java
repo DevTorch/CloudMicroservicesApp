@@ -1,5 +1,6 @@
 package springcloudms.inventoryservice.service.impl;
 
+import cloudmicroservicesapp.core.AddNewBookEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -12,7 +13,6 @@ import springcloudms.inventoryservice.model.BookProduct;
 import springcloudms.inventoryservice.model.dto.BookCreationDTO;
 import springcloudms.inventoryservice.repository.BookRepository;
 import springcloudms.inventoryservice.service.BookService;
-import springcloudms.inventoryservice.service.event.AddNewBookEvent;
 
 import java.time.LocalDateTime;
 import java.util.List;

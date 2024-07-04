@@ -1,5 +1,6 @@
 package springcloudms.inventoryservice.repository;
 
+import cloudmicroservicesapp.core.enums.WarehousesEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import springcloudms.inventoryservice.model.BookProduct;
 

@@ -1,0 +1,2 @@
+inventory-service:
+  host: http://localhost:${wiremock.server.port}

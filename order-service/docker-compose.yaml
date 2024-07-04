@@ -1,0 +1,15 @@
+version: '4'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=order-service
+    ports:
+      - "5430:5432"
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - ./docker/initDB.sql:/docker-entrypoint-initdb.d/initDB.sql

@@ -1,0 +1,30 @@
+server:
+  port: 8761
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+spring:
+  application:
+    name: discovery-server
+eureka:
+  server:
+    renewal-percent-threshold: 0.85
+
+  instance:
+    hostname: discovery-server
+    metadata-map:
+      zone: Zone_A
+    lease-renewal-interval-in-seconds: 10
+
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: false
+    fetch-registry: false
+
+
+

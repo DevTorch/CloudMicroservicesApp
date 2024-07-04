@@ -1,0 +1,5 @@
+- MongoDB
+- Docker Compose
+- Gradle
+- Testcontainers
+- Rest Assured

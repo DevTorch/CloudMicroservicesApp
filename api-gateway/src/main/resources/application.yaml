@@ -1,0 +1,81 @@
+server:
+  port: 8765
+#
+#jwt:
+#  secret:
+#    key: SldUX0FVVEhfU0VSVklDRV9BQ0NFU1NfU0VDUkVUX0tFWQ==
+
+spring:
+  application:
+    name: API-GATEWAY
+  output:
+    ansi:
+      enabled: always
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/product-service/**
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order-service/**
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/inventory-service/**
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+    hostname: http://localhost
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${eureka.instance.hostname}:8761/eureka
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+    groups:
+      enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: Product Service
+#        id: product_service_swagger
+        url: /product-service/v3/api-docs
+      - name: Order Service
+#        id: order_service_swagger
+        url: /order-service/v3/api-docs
+      - name: Inventory Service
+#        id: inventory_service_swagger
+        url: /inventory-service/v3/api-docs
+      - name: Customer Service
+#        id: customer_service_swagger
+        url: /customer-service/v3/api-docs
+
