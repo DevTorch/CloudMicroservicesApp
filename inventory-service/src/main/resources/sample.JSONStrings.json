@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Harry Potter and the Philosopher's Stone",
+    "author": "J.K. Rowling",
+    "publisher": "Houghton Mifflin Harcourt",
+    "isbnNo": "978-7-56619-909-9",
+    "warehouse": "WAREHOUSE_SEATTLE",
+    "quantity": 55,
+    "purchasePrice": 10
+  },
+
+  {
+    "title": "War and Peace",
+    "author": "A. N. Tolstoy",
+    "publisher": "Prosveshenie",
+    "isbnNo": "978-5-389-01916-6",
+    "warehouse": "WAREHOUSE_MOSCOW",
+    "quantity": 50,
+    "purchasePrice": 8
+  },
+
+  {
+    "title": "Сказка на русском языке",
+    "author": "А.С. Пушкин",
+    "publisher": "М.О. Сборник",
+    "isbnNo": "961-7-56619-909-9",
+    "warehouse": "WAREHOUSE_MOSCOW",
+    "quantity": 50,
+    "purchasePrice": 11
+  },
+
+  {
+    "title": "Lord of the Rings",
+    "author": "J.R.R. Tolkien",
+    "publisher": "Houghton Mifflin Harcourt",
+    "isbnNo": "978-1-56619-909-9",
+    "warehouse": "WAREHOUSE_MOSCOW",
+    "quantity": 50,
+    "purchasePrice": 10
+  }
+]

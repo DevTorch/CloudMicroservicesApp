@@ -1,0 +1,76 @@
+server:
+  port: 8095
+
+spring:
+  application:
+    name: INVENTORY-SERVICE
+
+  jpa:
+    show_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5431/inventory-service
+    username: postgres
+    password: postgres
+
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092,localhost:9094
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+#      retries: 10 | not recommended
+#        retry.backoff.ms: 1000 | not recommended
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
+        delivery.timeout.ms: 10000
+        linger.ms: 0
+        request.timeout.ms: 5000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    hostname: http://localhost
+
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    service-url:
+      defaultZone: ${eureka.instance.hostname}:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+
+#    eureka-service-url-poll-interval-seconds: 15
+#    healthcheck:
+#      enabled: true

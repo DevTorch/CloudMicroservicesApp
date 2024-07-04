@@ -1,0 +1,5 @@
+rootProject.name = 'CloudMicroservicesApp'
+
+include 'core'
+include 'notification-service'
+include 'inventory-service'
