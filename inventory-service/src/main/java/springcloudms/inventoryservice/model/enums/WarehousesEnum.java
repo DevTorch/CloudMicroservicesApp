@@ -1,4 +1,4 @@
-package cloudmicroservicesapp.core.enums;
+package springcloudms.inventoryservice.model.enums;
 
 public enum WarehousesEnum {
     WAREHOUSE_SEATTLE,

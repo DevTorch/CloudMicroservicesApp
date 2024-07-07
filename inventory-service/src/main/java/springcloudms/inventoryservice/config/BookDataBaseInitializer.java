@@ -1,34 +1,32 @@
 package springcloudms.inventoryservice.config;
 
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
-import cloudmicroservicesapp.core.enums.WarehousesEnum;
-import lombok.RequiredArgsConstructor;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
-import springcloudms.inventoryservice.mapper.BookMapper;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
+import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
+import springcloudms.inventoryservice.model.enums.WarehousesEnum;
+import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.service.BookService;
-import springcloudms.inventoryservice.service.InventoryService;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 @Profile("!test")
-public class AppInitializer implements ApplicationListener<ContextRefreshedEvent>  {
+public class BookDataBaseInitializer {
 
-    private final InventoryService inventoryService;
+    private final List<BookResponseDTO> books;
     private final BookService bookService;
     private final BookMapper bookMapper;
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public BookDataBaseInitializer(BookService bookService, BookMapper bookMapper) {
+        this.bookService = bookService;
+        this.bookMapper = bookMapper;
 
         BookResponseDTO bookDtoOne = new BookResponseDTO(
                 UUID.randomUUID().toString(),
@@ -102,17 +100,16 @@ public class AppInitializer implements ApplicationListener<ContextRefreshedEvent
                 new BigDecimal("50.00")
         );
 
-        List<BookResponseDTO> books = List.of(bookDtoOne, bookDtoTwo, bookDtoThree, bookDtoFour, bookDtoFive, bookDtoSix);
+        books = List.of(bookDtoOne, bookDtoTwo, bookDtoThree, bookDtoFour, bookDtoFive, bookDtoSix);
 
-//        books.forEach(System.out::println);
-
-        System.out.println();
-
-        bookMapper.toEntities(books).forEach(System.out::println);
-
-//        bookService.saveAll(bookMapper.toEntities(books));
-
-
-
+        books.forEach(System.out::println);
     }
+
+    @PostConstruct
+    public void bookInit() {
+        log.info("Initializing books...");
+//        bookService.saveAll(bookMapper.toEntities(books));
+//        log.info("Books initialized %s", Arrays.toString(books.toArray()));
+    }
+
 }

@@ -1,9 +1,10 @@
 package springcloudms.inventoryservice.model.dto;
 
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
+import lombok.Builder;
+import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
 
+@Builder
 public record ProductResponseDTO(
-        Long id,
         String articleNo,
         String title,
         ProductTypeEnum productType,

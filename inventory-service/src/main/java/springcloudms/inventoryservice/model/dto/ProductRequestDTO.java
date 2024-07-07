@@ -1,8 +1,8 @@
 package springcloudms.inventoryservice.model.dto;
 
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
+import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
 
 @Builder
 @Schema(description = "DTO-модель сущности товара")

@@ -36,9 +36,9 @@ public final class InventoryInnerController {
         return inventoryService.isInStock(productRequestDTO.articleNo(), productRequestDTO.quantity());
     }
 
-    @GetMapping("/product/{productId}")
+    @GetMapping("/product/{articleNo}")
     @Tag(name = "Product API", description = "Api для работы Product Base Data.")
-    @Operation(summary = "Получение ProductResponseDTO по productId")
+    @Operation(summary = "Получение ProductResponseDTO по articleNo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Информация о продукте найдена",
                     content = {@Content(mediaType = "application/json",
@@ -46,9 +46,9 @@ public final class InventoryInnerController {
             @ApiResponse(responseCode = "404", description = "Информация о продукте не найдена",
                     content = @Content)
     })
-    public ResponseEntity<ProductResponseDTO> findProductDTOById(@PathVariable("productId") Long productId) {
+    public ResponseEntity<ProductResponseDTO> findProductDTOById(@PathVariable("articleNo") String articleNo) {
 
-        ProductResponseDTO productDTO = inventoryService.findProductDTOById(productId)
+        ProductResponseDTO productDTO = inventoryService.findProductDTOByArticleNo(articleNo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return ResponseEntity.ok(productDTO);
     }
@@ -66,5 +66,4 @@ public final class InventoryInnerController {
     public List<ProductResponseDTO> findAll() {
         return inventoryService.findAll();
     }
-
 }

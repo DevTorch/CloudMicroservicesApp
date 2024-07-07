@@ -1,8 +1,8 @@
-package cloudmicroservicesapp.core.events;
+package springcloudms.inventoryservice.events;
 
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
-import cloudmicroservicesapp.core.enums.WarehousesEnum;
 import lombok.Builder;
+import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
+import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 
 import java.math.BigDecimal;
 

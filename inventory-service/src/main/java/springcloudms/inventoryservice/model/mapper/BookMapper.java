@@ -1,8 +1,9 @@
-package springcloudms.inventoryservice.mapper;
+package springcloudms.inventoryservice.model.mapper;
 
 import org.springframework.stereotype.Component;
 import springcloudms.inventoryservice.model.BookEntity;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
+import springcloudms.inventoryservice.service.BookService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +18,7 @@ public class BookMapper implements Mappable<BookEntity, BookResponseDTO> {
     }
 
     public static BookEntity mapDtoToEntity(BookResponseDTO dto) {
+
         BookEntity book = new BookEntity();
         book.setArticleNo(dto.articleNo());
         book.setWarehouse(dto.warehouse());

@@ -1,4 +1,4 @@
-package cloudmicroservicesapp.core.enums;
+package springcloudms.core.enums;
 
 public enum ProductTypeEnum {
     BOOKS, ELECTRONICS, CLOTHES

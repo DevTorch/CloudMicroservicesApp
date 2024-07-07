@@ -23,10 +23,10 @@ public interface InventoryRepository extends JpaRepository<BaseInventoryProductE
 
     @Query(value = """
                     SELECT new springcloudms.inventoryservice.model.dto.ProductResponseDTO
-                    (p.id, p.articleNo, p.title, p.productType, p.quantity)
+                    (p.articleNo, p.title, p.productType, p.quantity)
                     FROM BaseInventoryProductEntity p
-                    WHERE p.id = :productId
+                    WHERE p.articleNo = :articleNo
             """)
-    Optional<ProductResponseDTO> findProductDTOById(Long productId);
+    Optional<ProductResponseDTO> findProductDTOByArticleNo(String articleNo);
 
 }

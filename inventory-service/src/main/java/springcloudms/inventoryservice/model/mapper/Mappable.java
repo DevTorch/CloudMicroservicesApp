@@ -1,4 +1,4 @@
-package springcloudms.inventoryservice.mapper;
+package springcloudms.inventoryservice.model.mapper;
 
 import java.util.List;
 

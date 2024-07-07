@@ -1,7 +1,7 @@
-package cloudmicroservicesapp.core.common_dtos;
+package springcloudms.core.common_dtos;
 
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
-import cloudmicroservicesapp.core.enums.WarehousesEnum;
+import springcloudms.core.enums.ProductTypeEnum;
+import springcloudms.core.enums.WarehousesEnum;
 
 
 import java.io.Serializable;

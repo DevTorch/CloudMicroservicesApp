@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springcloudms.inventoryservice.exception.KafkaSenderException;
-import springcloudms.inventoryservice.mapper.BookMapper;
-import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.service.BookService;
 
@@ -114,6 +114,16 @@ public class BookController {
     public ResponseEntity<BookResponseDTO> getBookResponseDTOByArticleNo(@PathVariable String articleNo) {
         if (bookService.findByArticleNo(articleNo).isPresent()) {
             return ResponseEntity.ok(bookService.findByArticleNo(articleNo).get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PutMapping(value = "/{articleNo}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BookResponseDTO> updateBook(@RequestBody BookResponseDTO bookResponseDTO, @PathVariable String articleNo) {
+
+        if (bookService.findByArticleNo(articleNo).isPresent()) {
+            return ResponseEntity.ok(bookService.update(bookResponseDTO));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

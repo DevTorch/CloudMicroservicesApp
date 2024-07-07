@@ -1,8 +1,5 @@
 package springcloudms.inventoryservice.custom;
 
-
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
-import cloudmicroservicesapp.core.enums.WarehousesEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -14,11 +11,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
+import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
+import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)

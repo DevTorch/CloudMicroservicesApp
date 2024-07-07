@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface InventoryService {
     Boolean isInStock(String articleNo, Integer quantity);
 
-    Optional<ProductResponseDTO> findProductDTOById(Long productId);
+    Optional<ProductResponseDTO> findProductDTOByArticleNo(String articleNo);
 
     List<ProductResponseDTO> findAll();
 }

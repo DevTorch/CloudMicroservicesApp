@@ -1,7 +1,5 @@
 package springcloudms.inventoryservice.model.base;
 
-import cloudmicroservicesapp.core.enums.ProductTypeEnum;
-import cloudmicroservicesapp.core.enums.WarehousesEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,12 +10,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
+import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,16 +30,17 @@ import java.util.UUID;
 @Table(name = "inventory")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class BaseInventoryProductEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_id_generator")
-    @SequenceGenerator(name = "base_id_generator",
-            sequenceName = "products_id_generator",
-            allocationSize = 1,
-            initialValue = 1001)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "base_id_generator")
+//    @SequenceGenerator(name = "base_id_generator",
+//            sequenceName = "products_id_generator",
+//            allocationSize = 1,
+//            initialValue = 1001)
+//    private Long id;
 
-    @NotNull
-    @Column(name = "article_number", unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "uuid_generator")
+    @Column(name = "article_number", unique = true, nullable = false, updatable = false)
     private String articleNo;
 
     @Column(name = "warehouse")
@@ -67,6 +67,7 @@ public abstract class BaseInventoryProductEntity {
 
     public BaseInventoryProductEntity() {
         this.articleNo = UUID.randomUUID().toString();
+        this.lastStockUpdate = LocalDateTime.now();
     }
 }
 

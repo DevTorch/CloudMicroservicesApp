@@ -30,8 +30,8 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional
-    public Optional<ProductResponseDTO> findProductDTOById(Long productId) {
-        return inventoryRepository.findProductDTOById(productId);
+    public Optional<ProductResponseDTO> findProductDTOByArticleNo(String articleNo) {
+        return inventoryRepository.findProductDTOByArticleNo(articleNo);
     }
 
     @Override
@@ -42,7 +42,6 @@ public class InventoryServiceImpl implements InventoryService {
         log.info("{}", all);
         for (BaseInventoryProductEntity baseEntity : all) {
             ProductResponseDTO response = new ProductResponseDTO(
-                    baseEntity.getId(),
                     baseEntity.getArticleNo(),
                     baseEntity.getTitle(),
                     baseEntity.getProductType(),

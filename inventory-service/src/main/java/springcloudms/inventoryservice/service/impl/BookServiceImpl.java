@@ -1,14 +1,14 @@
 package springcloudms.inventoryservice.service.impl;
 
-import cloudmicroservicesapp.core.events.AddNewBookEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springcloudms.inventoryservice.events.AddNewBookEvent;
 import springcloudms.inventoryservice.exception.KafkaSenderException;
-import springcloudms.inventoryservice.mapper.BookMapper;
+import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.model.BookEntity;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.repository.BookRepository;

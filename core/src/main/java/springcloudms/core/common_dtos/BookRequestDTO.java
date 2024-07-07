@@ -1,4 +1,4 @@
-package cloudmicroservicesapp.core.common_dtos;
+package springcloudms.core.common_dtos;
 
 public record BookRequestDTO(
         String articleNo,
