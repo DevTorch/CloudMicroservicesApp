@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import springcloudms.inventoryservice.exception.BookNotFoundException;
 import springcloudms.inventoryservice.exception.KafkaSenderException;
 
 @Slf4j
@@ -25,5 +26,10 @@ public class GlobalRestControllerAdvice {
 //                .body(new ErrorResponse(500, e.getMessage()));
 
         return null;
+    }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<ErrorCodes> handleBookNotFoundException(BookNotFoundException e) {
+        return ResponseEntity.status(404).body(ErrorCodes.NOT_FOUND.getErrorCode());
     }
 }

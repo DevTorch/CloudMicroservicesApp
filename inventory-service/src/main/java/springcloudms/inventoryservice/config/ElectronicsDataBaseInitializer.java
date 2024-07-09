@@ -1,6 +1,6 @@
 package springcloudms.inventoryservice.config;
 
-import springcloudms.inventoryservice.model.base.UUIDGenerator;
+import lombok.extern.slf4j.Slf4j;
 import springcloudms.inventoryservice.model.dto.ElectronicsResponseDTO;
 import springcloudms.inventoryservice.model.enums.ElectronicCategoryEnum;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
@@ -8,10 +8,11 @@ import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 import springcloudms.inventoryservice.service.ElectronicsService;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
+@Slf4j
+//@Component
+//@Profile("!test")
 public class ElectronicsDataBaseInitializer {
     private final ElectronicsService electronicsService;
     private List<ElectronicsResponseDTO> electronics;

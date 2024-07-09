@@ -39,7 +39,7 @@ public abstract class BaseInventoryProductEntity {
 //    private Long id;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID, generator = "uuid_generator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "article_number", unique = true, nullable = false, updatable = false)
     private String articleNo;
 

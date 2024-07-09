@@ -19,4 +19,6 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     Optional<BookEntity> findByArticleNo(String articleNo);
 
     Boolean deleteByArticleNo(String articleNo);
+
+    Optional<BookEntity> findByIsbnNo(String isbnNo);
 }

@@ -17,4 +17,6 @@ public interface BookService extends AbstractService<BookResponseDTO, Long> {
     Optional<BookResponseDTO> findByArticleNo(String articleNo);
 
     Boolean deleteByArticleNo(String articleNo);
+
+    Optional<String> getArticleNoByISBN(String isbnNo);
 }

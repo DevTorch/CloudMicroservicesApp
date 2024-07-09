@@ -57,12 +57,12 @@ public class KafkaConfig {
     }
 
     @Bean
-    ProducerFactory<String, AddNewBookEvent> producerFactory() {
+    ProducerFactory<String, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(kafkaProducerConfigs());
     }
 
     @Bean
-    KafkaTemplate<String, AddNewBookEvent> kafkaTemplate() {
+    KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 

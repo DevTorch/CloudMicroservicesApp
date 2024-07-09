@@ -7,10 +7,11 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springcloudms.inventoryservice.events.AddNewBookEvent;
+import springcloudms.inventoryservice.exception.BookNotFoundException;
 import springcloudms.inventoryservice.exception.KafkaSenderException;
-import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.model.BookEntity;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
+import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.repository.BookRepository;
 import springcloudms.inventoryservice.service.BookService;
 
@@ -18,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final KafkaTemplate<String, AddNewBookEvent> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BookMapper bookMapper;
 
     @Override
@@ -56,15 +56,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void saveBook(BookResponseDTO bookResponseDTO) throws ExecutionException, InterruptedException {
+    public void saveBook(BookResponseDTO bookResponseDTO) {
 
         final BookEntity bookEntity = BookMapper.mapDtoToEntity(bookResponseDTO);
 
         bookRepository.save(bookEntity);
-        log.info("Book saved successfully {}: ", bookEntity);
+
+        log.info("Book saved successfully {}: ", bookEntity.getArticleNo());
 
         AddNewBookEvent event = new AddNewBookEvent(
-                bookResponseDTO.articleNo(),
+                bookEntity.getArticleNo(),
                 bookResponseDTO.productType(),
                 bookResponseDTO.title(),
                 bookResponseDTO.author(),
@@ -75,12 +76,14 @@ public class BookServiceImpl implements BookService {
                 bookResponseDTO.purchasePrice()
         );
 
+        log.info("Event: {}", event);
+
         /* SYNC CALL
         SendResult<String, AddNewBookEvent> result = kafkaTemplate
                 .send("product-created-events-topic", event.articleNo(), event).get();*/
 
 //      ASYNC CALLBACK
-        final CompletableFuture<SendResult<String, AddNewBookEvent>> send =
+        final CompletableFuture<SendResult<String, Object>> send =
                 kafkaTemplate.send("product-created-events-topic", event.articleNo(), event);
 
         send.whenComplete(
@@ -127,6 +130,15 @@ public class BookServiceImpl implements BookService {
     @Override
     public Boolean deleteByArticleNo(String articleNo) {
         return bookRepository.deleteByArticleNo(articleNo);
+    }
+
+    @Override
+    public Optional<String> getArticleNoByISBN(String isbnNo) {
+        if (bookRepository.findByIsbnNo(isbnNo).isPresent()) {
+            return Optional.of(bookRepository.findByIsbnNo(isbnNo).get().getArticleNo());
+        } else {
+            throw new BookNotFoundException(isbnNo);
+        }
     }
 
 }

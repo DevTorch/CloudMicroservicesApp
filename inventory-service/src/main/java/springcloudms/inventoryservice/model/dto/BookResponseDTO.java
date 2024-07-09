@@ -24,7 +24,7 @@ public record BookResponseDTO(
 ) implements Serializable {
 
         public BookResponseDTO(String articleNo, ProductTypeEnum productType, String title, String author, String publisher, String isbnNo, WarehousesEnum warehouse, Integer quantity, BigDecimal purchasePrice) {
-                this.articleNo = null;
+                this.articleNo = UUID.randomUUID().toString();
                 this.productType = ProductTypeEnum.BOOKS;
                 this.title = title;
                 this.author = author;

@@ -96,7 +96,7 @@ public class CustomizedContextMainTest {
     void name() throws Exception {
         log.info("DataBase connected: {}", postgres.getJdbcUrl());
 
-        Long productId = 1001L;
+        String articleNo = "65aa804d-b327-44a8-83bc-0862b5865278";
         String name = "BOOK_ONE";
         String author = "AUTHOR_ONE";
         Integer quantity = 10;
@@ -104,7 +104,7 @@ public class CustomizedContextMainTest {
 //        entityManager
 //                .persist(new BookProduct(productId, name, author, quantity));
 
-        mockMvc.perform(get("/api/books/{productId}", productId))
+        mockMvc.perform(get("/api/books/{articleNo}", articleNo))
                 .andExpect(status().isOk());
 
         assertTrue(true);

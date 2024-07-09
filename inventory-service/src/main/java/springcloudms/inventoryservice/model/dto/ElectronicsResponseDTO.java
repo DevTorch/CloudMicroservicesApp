@@ -18,14 +18,14 @@ import java.time.LocalDateTime;
  */
 @Builder
 public record ElectronicsResponseDTO(@NotNull String articleNo,
-                                     @NotNull WarehousesEnum warehouse,
-                                     @NotNull ProductTypeEnum productType,
                                      @NotNull @NotEmpty String title,
-                                     @Min(0) Integer quantity,
-                                     @PastOrPresent LocalDateTime lastStockUpdate,
-                                     @NotNull @Min(0) BigDecimal purchasePrice,
-                                     @NotNull ElectronicCategoryEnum category,
                                      String model,
                                      String characteristics,
-                                     String description) implements Serializable {
+                                     String description,
+                                     @NotNull ProductTypeEnum productType,
+                                     @NotNull ElectronicCategoryEnum category,
+                                     @NotNull WarehousesEnum warehouse,
+                                     @Min(0) Integer quantity,
+                                     @PastOrPresent LocalDateTime lastStockUpdate,
+                                     @NotNull @Min(0) BigDecimal purchasePrice) implements Serializable {
 }

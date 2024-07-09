@@ -2,6 +2,7 @@ package springcloudms.inventoryservice.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -32,4 +33,10 @@ public class BookEntity extends BaseInventoryProductEntity {
     @Column(name = "ISBN", unique = true)
     private String isbnNo;
 
+    @PostPersist
+    public void postPersist() {
+
+
+
+    }
 }
