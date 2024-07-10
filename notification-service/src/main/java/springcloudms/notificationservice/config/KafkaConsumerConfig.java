@@ -51,7 +51,6 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
 
-        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(JsonDeserializer.TRUSTED_PACKAGES, environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
 
         return new DefaultKafkaConsumerFactory<>(props);
@@ -66,10 +65,11 @@ public class KafkaConsumerConfig {
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
-            ConsumerFactory<String, Object> consumerFactory, KafkaTemplate<String, Object> kafkaTemplate) {
+            ConsumerFactory<String, Object> consumerFactory, KafkaTemplate kafkaTemplate) {
 
         DefaultErrorHandler errorHandler = new DefaultErrorHandler(
-                new DeadLetterPublishingRecoverer(kafkaTemplate), new FixedBackOff(3000, 3));
+                new DeadLetterPublishingRecoverer(kafkaTemplate),
+                new FixedBackOff(3000, 3));
 
         errorHandler.addRetryableExceptions(RetryableException.class);
         errorHandler.addNotRetryableExceptions(NonRetryableException.class);
@@ -91,7 +91,8 @@ public class KafkaConsumerConfig {
      * @return the created KafkaTemplate
      */
     @Bean
-    KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
+    KafkaTemplate<String, Object> retryableTopicKafkaTemplate(ProducerFactory<String, Object> producerFactory) {
+//    KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 

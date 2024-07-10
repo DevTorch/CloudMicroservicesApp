@@ -1,1 +1,28 @@
-spring.application.name=kafka-server
+server:
+  port: 9090
+spring:
+  application:
+    name: KAFKA-SERVER
+  config:
+    import: optional:file:.env[.properties]
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+    hostname: http://localhost
+
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    service-url:
+      defaultZone: ${eureka.instance.hostname}:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -1,5 +1,5 @@
 server:
-  port: 8096
+  port: 0
 spring:
   application:
     name: NOTIFICATION-SERVICE
@@ -9,16 +9,17 @@ spring:
   kafka:
     consumer:
       bootstrap-servers: localhost:9092,localhost:9094
+      group-id: cloudmicroservices-consumer-group
       properties:
         spring.json.trusted.packages: "springcloudms.inventoryservice.events"
         spring.json.type.mapping: "springcloudms.inventoryservice.events.AddNewBookEvent:springcloudms.notificationservice.events.AddNewBookEvent"
-        auto.create.topics.enable: true
-      group-id: cloudmicroservices-consumer-group
+        auto.create.topics.enable: false
 
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
+#    instance-id: ${spring.application.name}:${server.port}
+    instance-id: ${spring.application.name}:${random.uuid}
     hostname: http://localhost
 
   client:
