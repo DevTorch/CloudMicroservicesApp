@@ -1,17 +1,32 @@
-server:
-  port: 0
+#server:
+#  port: ${random.int(8075.8085)}
 spring:
   application:
     name: NOTIFICATION-SERVICE
   config:
     import: optional:file:.env[.properties]
 
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  h2:
+    console:
+      enabled: true
+      path: ./h2
+
   kafka:
     consumer:
       bootstrap-servers: localhost:9092,localhost:9094
       group-id: cloudmicroservices-consumer-group
       properties:
-        spring.json.trusted.packages: "springcloudms.inventoryservice.events"
+        spring.json.trusted.packages: "springcloudms.notificationservice.events"
         spring.json.type.mapping: "springcloudms.inventoryservice.events.AddNewBookEvent:springcloudms.notificationservice.events.AddNewBookEvent"
         auto.create.topics.enable: false
 

@@ -40,6 +40,18 @@ public class Book {
     @NonNull
     @Field("price")
     private BigDecimal price;
+    @Field("publisher")
+    private String publisher;
+    @Field("positive_feedback")
+    private Integer positiveFeedback;
+    @Field("negative_feedback")
+    private Integer negativeFeedback;
+    @Field("rating")
+    private Double rating;
+    @Field("stock")
+    private Integer stock;
+    @Field("image")
+    private String image;
 
     public Book() {
         this.category = ProductCategoryEnum.BOOKS;

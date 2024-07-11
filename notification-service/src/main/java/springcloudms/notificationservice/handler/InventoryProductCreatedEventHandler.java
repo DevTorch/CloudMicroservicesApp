@@ -2,13 +2,17 @@ package springcloudms.notificationservice.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +20,8 @@ import springcloudms.notificationservice.events.AddNewBookEvent;
 import springcloudms.notificationservice.events.AddNewElectronicsEvent;
 import springcloudms.notificationservice.exception.NonRetryableException;
 import springcloudms.notificationservice.exception.RetryableException;
+import springcloudms.notificationservice.persistence.repository.ProcessedEventRepository;
+import springcloudms.notificationservice.persistence.entity.ProcessEventEntity;
 
 @Slf4j
 @Component
@@ -24,14 +30,27 @@ import springcloudms.notificationservice.exception.RetryableException;
 public class InventoryProductCreatedEventHandler {
 
     private final RestTemplate restTemplate;
+    private final ProcessedEventRepository processedEventRepository;
 
-    @RetryableTopic(kafkaTemplate = "retryableTopicKafkaTemplate")
+    @Transactional
+//    @RetryableTopic(kafkaTemplate = "retryableTopicKafkaTemplate")
     @KafkaHandler
-    public void handleNewBookEvent(AddNewBookEvent event) {
+    public void handleNewBookEvent(
+            @Payload AddNewBookEvent event,
+            @Header("messageId") String messageId,
+            @Header(KafkaHeaders.RECEIVED_KEY) String messageKey) {
 
-        final String uri = "http://localhost:9090/api/response/200";
+        log.info("New Book created event received: {}", event.toString());
+
+        var getMessageId = processedEventRepository.findByMessageId(messageId);
+
+        if (getMessageId.isPresent()) {
+            log.info("Message already processed: {}", getMessageId.get());
+            return;
+        }
 
         try {
+            String uri = "http://localhost:9090/api/response/200";
             var response = restTemplate
                     .exchange(uri, HttpMethod.GET, null, String.class);
 
@@ -50,7 +69,17 @@ public class InventoryProductCreatedEventHandler {
             log.error("Failed to call mock service", ex);
             throw new NonRetryableException("Failed to call mock service", ex.getCause());
         }
-        log.info("New Book created event received: {}", event.toString());
+
+        try {
+            processedEventRepository.save(new ProcessEventEntity(
+                    messageId,
+                    messageKey,
+                    "Book",
+                    event.toString()));
+        } catch (DataIntegrityViolationException e) {
+            log.error("Failed to save processed event", e);
+            throw new NonRetryableException("Failed to save processed event", e.getCause());
+        }
     }
 
     @DltHandler

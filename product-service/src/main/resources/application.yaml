@@ -7,6 +7,17 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:password@localhost:27017/product-service?authSource=admin
+  config:
+    import: optional:file:.env[.properties]
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9094
+      group-id: cloudmicroservices-consumer-group
+      properties:
+        spring.json.trusted.packages: "springcloudms.productservice"
+        spring.json.type.mapping: "springcloudms.inventoryservice.events.AddNewBookEvent:springcloudms.notificationservice.events.AddNewBookEvent"
+        auto.create.topics.enable: false
 
 springdoc:
   api-docs:

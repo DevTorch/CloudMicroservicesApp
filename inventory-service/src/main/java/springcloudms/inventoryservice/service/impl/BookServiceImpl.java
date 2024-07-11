@@ -2,6 +2,7 @@ package springcloudms.inventoryservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,16 @@ import springcloudms.inventoryservice.service.BookService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
+    private final String PRODUCT_TOPIC = "product-created-events-topic";
     private final BookRepository bookRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BookMapper bookMapper;
@@ -56,7 +60,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void saveBook(BookResponseDTO bookResponseDTO) {
+    public void saveBook(BookResponseDTO bookResponseDTO) throws ExecutionException, InterruptedException {
 
         final BookEntity bookEntity = BookMapper.mapDtoToEntity(bookResponseDTO);
 
@@ -78,27 +82,39 @@ public class BookServiceImpl implements BookService {
 
         log.info("Event: {}", event);
 
-        /* SYNC CALL
-        SendResult<String, AddNewBookEvent> result = kafkaTemplate
-                .send("product-created-events-topic", event.articleNo(), event).get();*/
+        //KAFKA MESSAGE ID HEADERS
+        ProducerRecord<String, Object> record = new ProducerRecord<>(
+                PRODUCT_TOPIC,
+                event.articleNo(),
+                event);
+
+        record.headers().add("messageId", UUID.randomUUID().toString().getBytes())
+                .add("timestamp", LocalDateTime.now().toString().getBytes())
+                .add("eventType", "BookCreated".getBytes());
+
+
+        /* SYNC CALL via .get() blocking method */
+        SendResult<String, Object> result = kafkaTemplate.send(record).get();
+
+        log.info("Book event sent successfully {}: ", result.getRecordMetadata());
 
 //      ASYNC CALLBACK
-        final CompletableFuture<SendResult<String, Object>> send =
-                kafkaTemplate.send("product-created-events-topic", event.articleNo(), event);
-
-        send.whenComplete(
-                (result, ex) -> {
-                    if (ex == null) {
-                        log.info("Book event sent successfully {}: ", result.getRecordMetadata());
-
-                        log.info("Topic: {}", result.getRecordMetadata().topic());
-                        log.info("Partition: {}", result.getRecordMetadata().partition());
-                        log.info("Offset: {}", result.getRecordMetadata().offset());
-                    } else {
-                        log.error("Book event failed to send: ", ex);
-                        throw new KafkaSenderException(LocalDateTime.now(), ex.getMessage());
-                    }
-                });
+//        final CompletableFuture<SendResult<String, Object>> send =
+//                kafkaTemplate.send(record);
+//
+//        send.whenComplete(
+//                (result, ex) -> {
+//                    if (ex == null) {
+//                        log.info("Book event sent successfully {}: ", result.getRecordMetadata());
+//
+//                        log.info("Topic: {}", result.getRecordMetadata().topic());
+//                        log.info("Partition: {}", result.getRecordMetadata().partition());
+//                        log.info("Offset: {}", result.getRecordMetadata().offset());
+//                    } else {
+//                        log.error("Book event failed to send: ", ex);
+//                        throw new KafkaSenderException(LocalDateTime.now(), ex.getMessage());
+//                    }
+//                });
     }
 
     @Override
