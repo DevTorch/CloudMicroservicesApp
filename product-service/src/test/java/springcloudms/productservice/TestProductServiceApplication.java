@@ -17,7 +17,8 @@ public class TestProductServiceApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.from(ProductServiceApplication::main).with(TestProductServiceApplication.class).run(args);
+        SpringApplication.from(ProductServiceApplication::main)
+                .with(TestProductServiceApplication.class).run(args);
     }
 
 }

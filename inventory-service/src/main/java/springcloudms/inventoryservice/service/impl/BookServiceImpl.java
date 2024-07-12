@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private final String PRODUCT_TOPIC = "product-created-events-topic";
     private final BookRepository bookRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final BookMapper bookMapper;
@@ -75,14 +74,14 @@ public class BookServiceImpl implements BookService {
                 bookResponseDTO.author(),
                 bookResponseDTO.publisher(),
                 bookResponseDTO.isbnNo(),
-                bookResponseDTO.warehouse(),
-                bookResponseDTO.quantity(),
-                bookResponseDTO.purchasePrice()
+                bookResponseDTO.warehouse()
         );
 
         log.info("Event: {}", event);
 
         //KAFKA MESSAGE ID HEADERS
+        String PRODUCT_TOPIC = "product-created-events-topic";
+
         ProducerRecord<String, Object> record = new ProducerRecord<>(
                 PRODUCT_TOPIC,
                 event.articleNo(),

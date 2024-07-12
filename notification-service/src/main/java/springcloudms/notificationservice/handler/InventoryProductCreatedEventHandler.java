@@ -22,6 +22,7 @@ import springcloudms.notificationservice.exception.NonRetryableException;
 import springcloudms.notificationservice.exception.RetryableException;
 import springcloudms.notificationservice.persistence.repository.ProcessedEventRepository;
 import springcloudms.notificationservice.persistence.entity.ProcessEventEntity;
+import springcloudms.notificationservice.persistence.service.ProcessedEventsService;
 
 @Slf4j
 @Component
@@ -31,8 +32,9 @@ public class InventoryProductCreatedEventHandler {
 
     private final RestTemplate restTemplate;
     private final ProcessedEventRepository processedEventRepository;
+    private final ProcessedEventsService processedEventsService;
 
-    @Transactional
+//    @Transactional
 //    @RetryableTopic(kafkaTemplate = "retryableTopicKafkaTemplate")
     @KafkaHandler
     public void handleNewBookEvent(
@@ -42,7 +44,8 @@ public class InventoryProductCreatedEventHandler {
 
         log.info("New Book created event received: {}", event.toString());
 
-        var getMessageId = processedEventRepository.findByMessageId(messageId);
+        var getMessageId = processedEventsService.findByMessageId(messageId);
+//        var getMessageId = processedEventRepository.findByMessageId(messageId);
 
         if (getMessageId.isPresent()) {
             log.info("Message already processed: {}", getMessageId.get());
@@ -71,7 +74,7 @@ public class InventoryProductCreatedEventHandler {
         }
 
         try {
-            processedEventRepository.save(new ProcessEventEntity(
+            processedEventsService.save(new ProcessEventEntity(
                     messageId,
                     messageKey,
                     "Book",

@@ -10,17 +10,18 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProcessedServiceImpl implements ProcessedEventsService {
+public class ProcessedEventsServiceImpl implements ProcessedEventsService {
 
     private final ProcessedEventRepository processedEventRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public Optional<ProcessEventEntity> findByMessageId(String messageId) {
         return processedEventRepository.findByMessageId(messageId);
     }
 
 
+    @Transactional
     @Override
     public void save(ProcessEventEntity processEventEntity) {
 

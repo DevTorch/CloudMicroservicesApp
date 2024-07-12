@@ -1,11 +1,14 @@
 package springcloudms.authservice.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +16,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -25,7 +30,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_id_generator")
     @SequenceGenerator(name = "account_id_generator",
             sequenceName = "account_id_seq",
-            allocationSize = 20,
+            allocationSize = 1,
             initialValue = 101)
     private Long id;
 
@@ -41,7 +46,10 @@ public class Account {
     @Column(nullable = false)
     private Boolean active;
 
-    @OneToMany(mappedBy = "accountId")
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "account_roles",
+            joinColumns = @JoinColumn(name = "account_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public Account(String email, String password, Boolean active, Set<Role> roles) {
@@ -49,6 +57,13 @@ public class Account {
         this.password = password;
         this.active = active;
         this.roles = roles;
+    }
+
+    public void setRole(Role role) {
+        if (roles == null) {
+            roles = new LinkedHashSet<>();
+        }
+        roles.add(role);
     }
 
     @Override

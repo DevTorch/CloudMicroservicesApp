@@ -27,7 +27,7 @@ public interface CustomerServiceFeignClient {
     @DeleteMapping("/delete/{accountId}")
     ResponseEntity<HttpStatus> deleteCustomer(@PathVariable Long accountId);
 
-    public class CustomerFallbackFactory implements FallbackFactory<CustomerFallbackFactory.FallbackWithFactory> {
+    class CustomerFallbackFactory implements FallbackFactory<CustomerFallbackFactory.FallbackWithFactory> {
         @Override
         public FallbackWithFactory create(Throwable cause) {
             return new FallbackWithFactory(cause.getMessage());

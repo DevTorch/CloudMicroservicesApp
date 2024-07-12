@@ -14,8 +14,6 @@ public record AddNewBookEvent(
         String author,
         String publisher,
         String isbnNo,
-        WarehousesEnum warehouse,
-        Integer quantity,
-        BigDecimal purchasePrice
+        WarehousesEnum warehouse
 ) {
 }

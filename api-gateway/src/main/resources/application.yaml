@@ -25,19 +25,19 @@ spring:
         - id: product-service
           uri: lb://product-service
           predicates:
-            - Path=/product-service/**
+            - Path=/product/**
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/order-service/**
+            - Path=/order/**
         - id: inventory-service
           uri: lb://inventory-service
           predicates:
-            - Path=/inventory-service/**
+            - Path=/inventory/**
         - id: customer-service
           uri: lb://customer-service
           predicates:
-            - Path=/**
+            - Path=/customer/**
 
 management:
   endpoints:
@@ -68,14 +68,14 @@ springdoc:
     urls:
       - name: Product Service
 #        id: product_service_swagger
-        url: /product-service/v3/api-docs
+        url: /product/v3/api-docs
       - name: Order Service
 #        id: order_service_swagger
-        url: /order-service/v3/api-docs
+        url: /order/v3/api-docs
       - name: Inventory Service
 #        id: inventory_service_swagger
-        url: /inventory-service/v3/api-docs
+        url: /inventory/v3/api-docs
       - name: Customer Service
 #        id: customer_service_swagger
-        url: /customer-service/v3/api-docs
+        url: /customer/v3/api-docs
 
