@@ -12,7 +12,7 @@ import java.util.Set;
 public record AccountResponseDTO(
         Long id,
         @NotEmpty @Email String email,
-        @NotEmpty Set<RoleNameEnum> roles,
+        @NotEmpty Set<Role> roles,
         Boolean isActive
 ) {
 }

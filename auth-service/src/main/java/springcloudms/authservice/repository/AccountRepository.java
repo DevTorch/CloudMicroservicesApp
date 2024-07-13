@@ -11,13 +11,16 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
-    Optional<Account> findById(@Param("accountId") Long id);
-
     @Query("""
-            SELECT a FROM Account a JOIN a.roles WHERE a.email = :email AND a.password = :password
+            SELECT a FROM Account a JOIN FETCH a.roles WHERE a.email = :email AND a.password = :password
             """)
     Optional<Account> findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 
-    @Query("SELECT a FROM Account a WHERE a.email = :email")
+//    @Query("SELECT a FROM Account a JOIN a.roles WHERE a.email = :email")
     Optional<Account> findByEmail(String email);
+
+    Optional<Long> findAccountIdByEmail(String email);
+
+//    @Query("SELECT a FROM Account a JOIN FETCH a.roles WHERE a.id = :accountId")
+    Optional<Account> findAccountById(Long accountId);
 }

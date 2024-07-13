@@ -8,7 +8,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record CustomerCreateRequestDTO(
+public record CustomerCreateRequestEvent(
         @NotNull Long accountId,
         @NotBlank String fullName,
         @NotBlank String nickname,

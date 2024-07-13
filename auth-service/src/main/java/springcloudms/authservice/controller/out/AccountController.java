@@ -13,6 +13,7 @@ import springcloudms.authservice.dto.account.request.AccountLoginRequestDTO;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
 import springcloudms.authservice.service.AccountService;
+import springcloudms.authservice.service.impl.AccountServiceImpl;
 
 @RequiredArgsConstructor
 @RestController
@@ -36,7 +37,7 @@ public class AccountController {
     }
     @GetMapping("/account/{accountId}")
     public ResponseEntity<AccountResponseDTO> getAccountById(@PathVariable("accountId") Long accountId) {
-        return accountService.getAccountById(accountId)
+        return accountService.findAccountById(accountId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

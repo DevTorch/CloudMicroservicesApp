@@ -14,7 +14,7 @@ public class AccountMapper {
         return AccountResponseDTO.builder()
                 .id(account.getId())
                 .email(account.getEmail())
-                .roles(account.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
+                .roles(account.getRoles())
                 .isActive(account.getActive())
                 .build();
     }

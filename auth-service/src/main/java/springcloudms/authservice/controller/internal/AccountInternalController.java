@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
-import springcloudms.authservice.service.AccountService;
+import springcloudms.authservice.service.impl.AccountServiceImpl;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountInternalController {
 
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
     @GetMapping
     public ResponseEntity<List<AccountResponseDTO>> getAllAccounts() {
@@ -30,7 +30,7 @@ public class AccountInternalController {
 
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountResponseDTO> getAccountById(@PathVariable("accountId") Long accountId) {
-        return accountService.getAccountById(accountId)
+        return accountService.findAccountById(accountId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
