@@ -91,7 +91,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public void createNewAccount(AccountSignUpDTO accountSignUpDTO) {
+    public void createNewAccount(AccountSignUpDTO accountSignUpDTO) throws ExecutionException, InterruptedException {
 
         Account account = new Account();
         account.setEmail(accountSignUpDTO.email());
@@ -124,7 +124,9 @@ public class AccountServiceImpl implements AccountService {
 
         try {
             SendResult<String, Object> sendResult = kafkaTemplate.send(newCustomerRecord).get();
+            log.info("SendResult {} ", sendResult.getRecordMetadata());
         } catch (InterruptedException | ExecutionException e) {
+
             throw new KafkaSenderException(String.format("Failed to send message to topic %s", signUpTopic), e);
         }
 
@@ -143,12 +145,7 @@ public class AccountServiceImpl implements AccountService {
                 .add("timestamp", LocalDateTime.now().toString().getBytes())
                 .add("eventType", "NewOrderAccountCreatedEvent".getBytes());
 
-        try {
-            SendResult<String, Object> ordeSendResult = kafkaTemplate.send(newOrderRecord).get();
-            log.info("SendResult: {}", ordeSendResult.getRecordMetadata());
-        } catch (InterruptedException | ExecutionException e) {
-            throw new KafkaSenderException(String.format("Failed to send message to topic %s", shoppingCart), e);
-        }
+        kafkaTemplate.send(newOrderRecord).get();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.NESTED)

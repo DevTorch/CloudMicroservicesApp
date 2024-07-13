@@ -15,6 +15,8 @@ import springcloudms.authservice.dto.account.response.AccountResponseDTO;
 import springcloudms.authservice.service.AccountService;
 import springcloudms.authservice.service.impl.AccountServiceImpl;
 
+import java.util.concurrent.ExecutionException;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
@@ -43,7 +45,7 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) {
+    public ResponseEntity<HttpStatus> signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) throws ExecutionException, InterruptedException {
         accountService.createNewAccount(accountSignUpDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

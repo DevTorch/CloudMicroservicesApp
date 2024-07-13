@@ -3,16 +3,17 @@ package springcloudms.authservice.config;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
+import springcloudms.authservice.exception.ServiceNotAvailableException;
 import springcloudms.authservice.service.AccountService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Component
 public class AccountDataInitializer {
 
     private final AccountService accountService;
-    private List<AccountSignUpDTO> accounts;
 
     public AccountDataInitializer(AccountService accountService) {
         this.accountService = accountService;
@@ -50,11 +51,16 @@ public class AccountDataInitializer {
                 .persistDateTime(LocalDateTime.now())
                 .build();
 
-        accounts = List.of(accOne, accTwo, accThree);
+        List<AccountSignUpDTO> accounts = List.of(accOne, accTwo, accThree);
 
         accounts.forEach(accountSignUpDTO -> {
             if (accountService.findAccountByEmail(accountSignUpDTO.email()).isEmpty()) {
-                accountService.createNewAccount(accountSignUpDTO);
+                try {
+                    accountService.createNewAccount(accountSignUpDTO);
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new ServiceNotAvailableException(String.format("Failed to create account %s",
+                            accountSignUpDTO), e);
+                }
             }
         });
     }

@@ -7,16 +7,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
-import springcloudms.authservice.service.impl.AccountServiceImpl;
+import springcloudms.authservice.service.AccountService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/internal/account")
+@RequestMapping("/api/account")
 @RequiredArgsConstructor
 public class AccountInternalController {
 
-    private final AccountServiceImpl accountService;
+    private final AccountService accountService;
 
     @GetMapping
     public ResponseEntity<List<AccountResponseDTO>> getAllAccounts() {
