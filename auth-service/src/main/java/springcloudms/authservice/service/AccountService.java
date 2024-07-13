@@ -1,13 +1,13 @@
 package springcloudms.authservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import springcloudms.authservice.dto.account.request.AccountLoginRequestDTO;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
 import springcloudms.authservice.dto.customer.CustomerCreateRequestDTO;
-import springcloudms.authservice.feign.CustomerServiceFeignClient;
 import springcloudms.authservice.model.Account;
 import springcloudms.authservice.model.RoleNameEnum;
 import springcloudms.authservice.repository.AccountRepository;
@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final CustomerServiceFeignClient customerService;
+    private final BCryptPasswordEncoder bCrypt;
+//    private final CustomerServiceFeignClient customerService;
 
     @Transactional(readOnly = true)
     public Boolean isAccountExists(Long accountId) {
@@ -77,7 +78,7 @@ public class AccountService {
 
         Account account = new Account();
         account.setEmail(accountSignUpDTO.email());
-        account.setPassword(accountSignUpDTO.password());
+        account.setPassword(bCrypt.encode(accountSignUpDTO.password()));
         account.setActive(Boolean.TRUE);
         accountRepository.save(account);
 
@@ -86,6 +87,7 @@ public class AccountService {
                 .orElseThrow();
 
         //TODO Check fields
+        //TODO Kafka Producer Send
         CustomerCreateRequestDTO customerCreateRequestDTO = CustomerCreateRequestDTO.builder()
                 .accountId(accountId)
                 .fullName(accountSignUpDTO.fullName())
@@ -93,7 +95,7 @@ public class AccountService {
                 .persistDateTime(accountSignUpDTO.persistDateTime())
                 .build();
 
-        customerService.createCustomer(customerCreateRequestDTO);
+//        customerService.createCustomer(customerCreateRequestDTO);
 
     }
 }
