@@ -40,7 +40,7 @@ public class Account {
     private String email;
 
     @NotNull
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)

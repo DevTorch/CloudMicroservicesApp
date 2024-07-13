@@ -33,7 +33,6 @@ public class AccountController {
                     .status(HttpStatus.NOT_FOUND)
                     .build();
         }
-
     }
     @GetMapping("/account/{accountId}")
     public ResponseEntity<AccountResponseDTO> getAccountById(@PathVariable("accountId") Long accountId) {

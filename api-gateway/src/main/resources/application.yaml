@@ -21,29 +21,41 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/**
+            - Path=/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: auth-service
+                fallbackUri: forward:/authFallback
+
+        - id: customer-service
+          uri: lb://CUSTOMER-SERVICE
+          predicates:
+              - Path=/customer/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: customer-service
+                fallbackUri: forward:/customersFallback
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: order-service
+                fallbackUri: forward:/orderFallback
+
         - id: product-service
           uri: lb://product-service
           predicates:
             - Path=/product/**
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/order/**
         - id: inventory-service
           uri: lb://inventory-service
           predicates:
             - Path=/inventory/**
-        - id: customer-service
-          uri: lb://customer-service
-          predicates:
-            - Path=/customer/**
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
 
 eureka:
   instance:
@@ -55,6 +67,23 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${eureka.instance.hostname}:8761/eureka
+
+# Actuator Config
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream, health, info
+#        include: '*'
+
+#Hystrix Config
+hystrix:
+  command:
+    fallback:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
 
 springdoc:
   api-docs:
