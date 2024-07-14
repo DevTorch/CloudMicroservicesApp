@@ -14,7 +14,7 @@ public interface AccountService {
     Optional<AccountResponseDTO> findAccountById(Long accountId);
     List<AccountResponseDTO> getAllAccounts();
     Optional<AccountResponseDTO> findAccountByCredentials(AccountLoginRequestDTO loginRequestDTO);
-    void createNewAccount(AccountSignUpDTO accountSignUpDTO) throws ExecutionException, InterruptedException;
+    void createNewAccount(AccountSignUpDTO accountSignUpDTO);
     Optional<Account> findAccountByEmail(String email);
     Optional<Long> findAccountIdByEmail(String email);
 }

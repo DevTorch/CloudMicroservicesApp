@@ -29,9 +29,8 @@ spring:
     openfeign:
       client:
         config:
-          auth-service:
-            url: http://localhost:8765
-
+          AUTH-SERVICE:
+            url: http://localhost:8081
 springdoc:
   api-docs:
     path: /v3/api-docs

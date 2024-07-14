@@ -26,7 +26,7 @@ public class KafkaProducerConfig {
     private String valueSerializer;
 
     @Value("${spring.kafka.producer.acks}")
-    private String acks;
+    private String acknowledgement;
 
     @Value("${spring.kafka.producer.properties.linger.ms}")
     private String linger;
@@ -46,7 +46,7 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
-        props.put(ProducerConfig.ACKS_CONFIG, "all");
+        props.put(ProducerConfig.ACKS_CONFIG, acknowledgement);
         props.put(ProducerConfig.LINGER_MS_CONFIG, linger);
         props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeout);
         props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeout);

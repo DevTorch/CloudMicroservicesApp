@@ -10,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -36,9 +39,12 @@ public class Role {
     @Column(length = 20, nullable = false)
     private RoleNameEnum name;
 
-    @ManyToMany(mappedBy = "roles", cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(name = "account_roles",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id"))
     @JsonBackReference
-    private Set<Account> accountId = new LinkedHashSet<>();
+    private Set<Account> accountId = new HashSet<>();
 
     public Role(Long id, RoleNameEnum name) {
         this.id = id;

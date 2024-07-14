@@ -1,6 +1,7 @@
 package springcloudms.authservice.controller.internal;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,14 +12,15 @@ import springcloudms.authservice.service.AccountService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/internal/account")
 @RequiredArgsConstructor
 public class AccountInternalController {
 
     private final AccountService accountService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<AccountResponseDTO>> getAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
@@ -30,6 +32,9 @@ public class AccountInternalController {
 
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountResponseDTO> getAccountById(@PathVariable("accountId") Long accountId) {
+
+        log.info("Get account by id: {}", accountId.toString());
+
         return accountService.findAccountById(accountId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

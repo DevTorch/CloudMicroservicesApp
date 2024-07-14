@@ -44,6 +44,8 @@ spring:
     openfeign:
       client:
         config:
+          CUSTOMER-SERVICE:
+            url: http://localhost:8082
           default:
             loggerLevel: BASIC
           feign:
@@ -59,3 +61,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+logging:
+  file:
+    path: classpath:logs/auth-service.log

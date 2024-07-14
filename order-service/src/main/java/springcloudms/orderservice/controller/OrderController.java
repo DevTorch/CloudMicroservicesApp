@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import springcloudms.orderservice.dto.OrderRequestDTO;
 import springcloudms.orderservice.service.OrderService;
+import springcloudms.orderservice.service.OrderServiceImpl;
 
 @RestController
 @RequestMapping("/api/orders")

@@ -50,7 +50,7 @@ public class Account {
     @JoinTable(name = "account_roles",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     public Account(String email, String password, Boolean active, Set<Role> roles) {
         this.email = email;
@@ -60,10 +60,18 @@ public class Account {
     }
 
     public void setRole(Role role) {
-        if (roles == null) {
-            roles = new LinkedHashSet<>();
-        }
         roles.add(role);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+               "id=" + id +
+               ", email='" + email + '\'' +
+               ", password='" + password + '\'' +
+               ", active=" + active +
+               ", roles=" + roles +
+               '}';
     }
 
     @Override

@@ -14,7 +14,7 @@ public class RoutesConfiguration {
     @Bean
     public RouteLocator commonRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-                .route("auth-service-router", r -> r
+                .route("auth-service-mapping", r -> r
                         .path("/api/auth/**")
                         .filters(f -> f
 //                                .rewritePath("/api/auth/(?<path>.*)", "/auth/${path}")
@@ -22,16 +22,19 @@ public class RoutesConfiguration {
                                         .setName("auth-service-circuitbreaker")
                                         .setFallbackUri("forward:/authFallback")))
                         .uri(ServiceLocations.AUTH_SERVICE.getUri()))
-                .route("inventory-service-router", r -> r
+                .route("inventory-service-mapping", r -> r
                         .path("/api/inventory/**")
                         .uri(ServiceLocations.INVENTORY_SERVICE.getUri()))
-                .route("product-service-router", r -> r
+                .route("product-service-mapping", r -> r
                         .path("/api/products/**")
                         .uri(ServiceLocations.PRODUCT_SERVICE.getUri()))
-                .route("order-service-router", r -> r.path("/api/orders/**")
+                .route("order-service-mapping", r -> r.
+                        path("/api/orders/**")
                         .uri(ServiceLocations.ORDER_SERVICE.getUri()))
-                .route("inventory-service-router", r -> r.path("/api/customers/**")
+                .route("customer-service-mapping", r -> r
+                        .path("/api/customers/**")
                         .uri(ServiceLocations.CUSTOMER_SERVICE.getUri()))
+
                 .route("product_service_swagger", r -> r.path("/v3/api-docs")
                         .uri(ServiceLocations.PRODUCT_SERVICE.getUri()))
                 .route("inventory_service_swagger", r -> r.path("/v3/api-docs")

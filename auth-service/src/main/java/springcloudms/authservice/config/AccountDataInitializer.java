@@ -1,6 +1,7 @@
 package springcloudms.authservice.config;
 
 import jakarta.annotation.PostConstruct;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
 import springcloudms.authservice.exception.ServiceNotAvailableException;
@@ -53,16 +54,10 @@ public class AccountDataInitializer {
 
         List<AccountSignUpDTO> accounts = List.of(accOne, accTwo, accThree);
 
-        accounts.forEach(accountSignUpDTO -> {
-            if (accountService.findAccountByEmail(accountSignUpDTO.email()).isEmpty()) {
-                try {
-                    accountService.createNewAccount(accountSignUpDTO);
-                } catch (ExecutionException | InterruptedException e) {
-                    throw new ServiceNotAvailableException(String.format("Failed to create account %s",
-                            accountSignUpDTO), e);
-                }
-            }
-        });
+        accountService.createNewAccount(accOne);
+        accountService.createNewAccount(accTwo);
+        accountService.createNewAccount(accThree);
+
     }
 }
 

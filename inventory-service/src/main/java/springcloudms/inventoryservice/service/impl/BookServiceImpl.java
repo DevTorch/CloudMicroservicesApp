@@ -1,5 +1,7 @@
 package springcloudms.inventoryservice.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -59,13 +61,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void saveBook(BookResponseDTO bookResponseDTO) throws ExecutionException, InterruptedException {
+    public void saveBook(BookResponseDTO bookResponseDTO) throws ExecutionException, InterruptedException, JsonProcessingException {
 
         final BookEntity bookEntity = BookMapper.mapDtoToEntity(bookResponseDTO);
 
         bookRepository.save(bookEntity);
 
-        log.info("Book saved successfully {}: ", bookEntity.getArticleNo());
+        log.info("Book saved successfully {}: ", new ObjectMapper().writeValueAsString(bookEntity));
 
         AddNewBookEvent event = new AddNewBookEvent(
                 bookEntity.getArticleNo(),

@@ -13,7 +13,8 @@ import springcloudms.authservice.dto.customer.CustomerCreateRequestEvent;
 import springcloudms.authservice.dto.customer.CustomerUpdateRequestDTO;
 import springcloudms.authservice.exception.CustomerServiceResponseException;
 
-@FeignClient(name = "customer-service", path = "/api/internal/customer",
+@FeignClient(name = "CUSTOMER-SERVICE",
+        path = "/internal/customer",
         fallbackFactory = CustomerServiceFeignClient.CustomerFallbackFactory.class
 )
 public interface CustomerServiceFeignClient {
@@ -25,7 +26,7 @@ public interface CustomerServiceFeignClient {
     ResponseEntity<HttpStatus> createCustomer(@RequestBody CustomerCreateRequestEvent signUpDTO);
 
     @DeleteMapping("/delete/{accountId}")
-    ResponseEntity<HttpStatus> deleteCustomer(@PathVariable Long accountId);
+    ResponseEntity<HttpStatus> deleteCustomer(@PathVariable("accountId") Long accountId);
 
     class CustomerFallbackFactory implements FallbackFactory<CustomerFallbackFactory.FallbackWithFactory> {
         @Override
