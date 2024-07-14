@@ -17,45 +17,45 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: true
-      routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-            - Path=/auth/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: auth-service
-                fallbackUri: forward:/authFallback
-
-        - id: customer-service
-          uri: lb://CUSTOMER-SERVICE
-          predicates:
-              - Path=/customer/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: customer-service
-                fallbackUri: forward:/customersFallback
-
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/order/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: order-service
-                fallbackUri: forward:/orderFallback
-
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/product/**
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/inventory/**
+#      routes:
+##        - id: auth-service
+##          uri: lb://auth-service
+##          predicates:
+##            - Path=/api/auth/**
+##          filters:
+##            - name: CircuitBreaker
+##              args:
+##                name: auth-service
+##                fallbackUri: forward:/authFallback
+#
+#        - id: customer-service
+#          uri: lb://CUSTOMER-SERVICE
+#          predicates:
+#              - Path=/customer/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: customer-service
+#                fallbackUri: forward:/customersFallback
+#
+#        - id: order-service
+#          uri: lb://ORDER-SERVICE
+#          predicates:
+#            - Path=/order/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: order-service
+#                fallbackUri: forward:/orderFallback
+#
+#        - id: product-service
+#          uri: lb://product-service
+#          predicates:
+#            - Path=/product/**
+#        - id: inventory-service
+#          uri: lb://inventory-service
+#          predicates:
+#            - Path=/inventory/**
 
 eureka:
   instance:
@@ -73,7 +73,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: hystrix.stream, health, info
+        include: hystrix.stream, health, info, metrics, prometheus, thread.dump
 #        include: '*'
 
 #Hystrix Config

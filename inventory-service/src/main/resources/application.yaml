@@ -33,7 +33,7 @@ spring:
       bootstrap-servers: localhost:9092,localhost:9094
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#      acks: all
+      acks: all
 #      retries: 10 | not recommended
 #        retry.backoff.ms: 1000 | not recommended
       properties:
@@ -73,4 +73,7 @@ management:
 
 #    eureka-service-url-poll-interval-seconds: 15
 #    healthcheck:
+logging:
+  file:
+    path: classpath:logs/inventory-service.log
 #      enabled: true

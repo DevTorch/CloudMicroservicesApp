@@ -2,8 +2,12 @@ package springcloudms.core;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
 
-//@SpringBootApplication
+@SpringBootApplication
+@EnableHystrixDashboard
+@EnableDiscoveryClient
 public class CoreApplication {
 
     public static void main(String[] args) {

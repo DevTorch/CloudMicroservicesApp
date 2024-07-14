@@ -1,10 +1,6 @@
 server:
   port: 8093
 
-
-inventory-service:
-  host: http://localhost:8765
-
 spring:
   application:
     name: ORDER-SERVICE
@@ -17,6 +13,7 @@ spring:
       hibernate:
         hbm2ddl:
           auto: none
+          highlight_sql: true
           format_sql: true
 
   datasource:
@@ -25,11 +22,16 @@ spring:
     username: postgres
     password: postgres
 
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui
+
+#Kafka Consumer Config
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092,localhost:9094
+      group-id: cloudmicroservices-consumer-group
+      properties:
+        spring.json.trusted.packages: "springcloudms.orderservice.events"
+        spring.json.type.mapping: "springcloudms.inventoryservice.events.AddNewBookEvent:springcloudms.notificationservice.events.AddNewBookEvent"
+        auto.create.topics.enable: false
 
   cloud:
     openfeign:
@@ -46,8 +48,6 @@ springdoc:
             readTimeout: 10000
           inventory-service:
             url: http://localhost:8765/api/inventory
-
-
 eureka:
   client:
     service-url:
@@ -62,6 +62,8 @@ eureka:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
 
-#inventory-service:
-#  host: lb://INVENTORY-SERVICE
-#  host: localhost:8092
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui

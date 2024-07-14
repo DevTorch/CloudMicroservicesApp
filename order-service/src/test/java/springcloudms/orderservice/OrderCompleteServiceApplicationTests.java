@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWireMock(port = 0)
-class OrderServiceApplicationTests {
+class OrderCompleteServiceApplicationTests {
 
     @ServiceConnection
     public static PostgreSQLContainer postgresContainer = new PostgreSQLContainer("postgres:latest");

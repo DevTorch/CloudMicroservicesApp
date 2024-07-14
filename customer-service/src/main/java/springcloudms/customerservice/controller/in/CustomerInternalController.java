@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import springcloudms.customerservice.dto.CustomerRequestSignUpDTO;
 import springcloudms.customerservice.dto.CustomerRequestUpdateDTO;
 import springcloudms.customerservice.service.CustomerService;
+import springcloudms.customerservice.service.CustomerServiceImpl;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/internal/customer")
+@RequestMapping("/internal/customer")
 public class CustomerInternalController {
 
     private final CustomerService customerService;
@@ -33,7 +34,7 @@ public class CustomerInternalController {
     }
 
     @DeleteMapping("/delete/{accountId}")
-    public ResponseEntity<HttpStatus> deleteCustomer(@PathVariable Long accountId) {
+    public ResponseEntity<HttpStatus> deleteCustomer(@PathVariable("accountId") Long accountId) {
         customerService.deleteCustomer(accountId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

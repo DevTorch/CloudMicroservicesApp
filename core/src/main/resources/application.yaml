@@ -1,3 +1,17 @@
+server:
+  port: 8888
+
 spring:
   application:
-    name: core
+    name: CORE
+
+eureka:
+  instance:
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

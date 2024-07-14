@@ -9,7 +9,7 @@ spring:
   datasource:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    url: ${DB_URL}
+    url: jdbc:h2:mem:db-notification-service-message-storage
     driver-class-name: org.h2.Driver
 
   jpa:
