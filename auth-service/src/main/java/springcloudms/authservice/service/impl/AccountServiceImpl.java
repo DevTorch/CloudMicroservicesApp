@@ -39,7 +39,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCrypt;
     private final RoleRepository roleRepository;
-    private final CustomerServiceFeignClient customerService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional(readOnly = true)
@@ -81,6 +80,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Optional<AccountResponseDTO> findAccountByCredentials(AccountLoginRequestDTO loginRequestDTO) {
 
+        if (accountRepository.findByEmail(loginRequestDTO.email()).isEmpty()) {
+            return Optional.empty();
+        }
+
         //TODO: Переделать: сначала проверяем почту, потом по паролю (а далее encoder.match)
 
         return accountRepository.findByEmailAndPassword(loginRequestDTO.email(), loginRequestDTO.password())
@@ -115,7 +118,9 @@ public class AccountServiceImpl implements AccountService {
                 .accountId(savedAccount.getId())
                 .fullName(accountSignUpDTO.fullName())
                 .nickname(accountSignUpDTO.nickname())
-                .persistDateTime(accountSignUpDTO.persistDateTime())
+                .persistDateTime(accountSignUpDTO.persistDateTime() == null
+                        ? LocalDateTime.now()
+                        : accountSignUpDTO.persistDateTime())
                 .build();
 
         String signUpTopic = "customer-signup-event-topic";
@@ -125,12 +130,17 @@ public class AccountServiceImpl implements AccountService {
                 String.valueOf(customerCreateEvent.accountId()),
                 customerCreateEvent);
 
-        newCustomerRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes())
-                .add("timestamp", LocalDateTime.now().toString().getBytes())
+        newCustomerRecord.headers()
+                .add("messageId", UUID.randomUUID().toString().getBytes())
+                .add("messageKey", customerCreateEvent.accountId().toString().getBytes())
                 .add("eventType", "NewCustomerCreatedEvent".getBytes());
 
+        //TODO Kafka Transaction #1
+
         try {
+
             SendResult<String, Object> sendResult = kafkaTemplate.send(newCustomerRecord).get();
+
             log.info("SendResult {} ", sendResult.getRecordMetadata());
             log.info("SendResult {} ", new ObjectMapper().writeValueAsString(sendResult.getRecordMetadata()));
 
@@ -144,17 +154,31 @@ public class AccountServiceImpl implements AccountService {
                 .createdTimeStamp(LocalDateTime.now())
                 .build();
 
-        String shoppingCart = "customer-shopping-cart-event-topic";
+        String shoppingCartTopic = "customer-shopping-cart-event-topic";
         ProducerRecord<String, Object> newOrderRecord = new ProducerRecord<>(
-                shoppingCart,
+                shoppingCartTopic,
                 String.valueOf(orderRequestEvent.accountId()),
                 orderRequestEvent);
 
-        newOrderRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes())
+        newOrderRecord.headers()
+                .add("messageId", UUID.randomUUID().toString().getBytes())
                 .add("timestamp", LocalDateTime.now().toString().getBytes())
                 .add("eventType", "NewOrderAccountCreatedEvent".getBytes());
 
-//        kafkaTemplate.send(newOrderRecord).get();
+        //TODO Kafka Transaction #2
+
+        try {
+
+            SendResult<String, Object> sendResult = kafkaTemplate.send(newOrderRecord).get();
+
+            log.info("Transaction 2 Metadata {} ", sendResult.getRecordMetadata());
+            log.info("Transaction 2 Content {} ", new ObjectMapper().writeValueAsString(sendResult.getRecordMetadata()));
+
+        } catch (InterruptedException | ExecutionException | JsonProcessingException e) {
+
+            throw new KafkaSenderException(String.format("Failed to send message to topic %s", signUpTopic), e);
+        }
+
     }
 
     @Transactional(readOnly = true)

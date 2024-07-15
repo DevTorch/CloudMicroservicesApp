@@ -31,6 +31,14 @@ spring:
         config:
           AUTH-SERVICE:
             url: http://localhost:8081
+  kafka:
+    consumer:
+      group-id: cloudmicroservices-consumer-group
+      bootstrap-servers: localhost:9092,localhost:9094
+      properties:
+        spring.json.trusted.packages: "springcloudms.customerservice.*"
+        spring.json.type.mapping: "{springcloudms.authservice.dto.customer.CustomerCreateRequestEvent:springcloudms.customerservice.events.CustomerCreateRequestEvent}"
+        auto.create.topics.enable: false
 springdoc:
   api-docs:
     path: /v3/api-docs

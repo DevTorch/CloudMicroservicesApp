@@ -12,7 +12,6 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -20,7 +19,6 @@ import springcloudms.notificationservice.events.AddNewBookEvent;
 import springcloudms.notificationservice.events.AddNewElectronicsEvent;
 import springcloudms.notificationservice.exception.NonRetryableException;
 import springcloudms.notificationservice.exception.RetryableException;
-import springcloudms.notificationservice.persistence.repository.ProcessedEventRepository;
 import springcloudms.notificationservice.persistence.entity.ProcessEventEntity;
 import springcloudms.notificationservice.persistence.service.ProcessedEventsService;
 
@@ -31,18 +29,15 @@ import springcloudms.notificationservice.persistence.service.ProcessedEventsServ
 public class InventoryProductCreatedEventHandler {
 
     private final RestTemplate restTemplate;
-    private final ProcessedEventRepository processedEventRepository;
     private final ProcessedEventsService processedEventsService;
 
-//    @Transactional
-//    @RetryableTopic(kafkaTemplate = "retryableTopicKafkaTemplate")
     @KafkaHandler
     public void handleNewBookEvent(
             @Payload AddNewBookEvent event,
             @Header("messageId") String messageId,
             @Header(KafkaHeaders.RECEIVED_KEY) String messageKey) {
 
-        log.info("New Book created event received: {}", event.toString());
+        log.info("New Book created events received: {}", event.toString());
 
         var getMessageId = processedEventsService.findByMessageId(messageId);
 //        var getMessageId = processedEventRepository.findByMessageId(messageId);
@@ -59,7 +54,7 @@ public class InventoryProductCreatedEventHandler {
 
             if (response.getStatusCode().value() == HttpStatus.OK.value()) {
                 log.info("Response from mock service: {}", response.getBody());
-                log.info("New Book created event received TRY/CATCH: {}", event.toString());
+                log.info("New Book created events received TRY/CATCH: {}", event);
             }
 
         } catch (ResourceAccessException e) {
@@ -80,8 +75,8 @@ public class InventoryProductCreatedEventHandler {
                     "Book",
                     event.toString()));
         } catch (DataIntegrityViolationException e) {
-            log.error("Failed to save processed event", e);
-            throw new NonRetryableException("Failed to save processed event", e.getCause());
+            log.error("Failed to save processed events", e);
+            throw new NonRetryableException("Failed to save processed events", e.getCause());
         }
     }
 
@@ -92,6 +87,6 @@ public class InventoryProductCreatedEventHandler {
 
     @KafkaHandler
     public void handleNewElectronics(AddNewElectronicsEvent event) {
-        log.info("New Electronics created event received: {}", event.title());
+        log.info("New Electronics created events received: {}", event.title());
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "complete_orders")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -39,7 +39,7 @@ public class OrderComplete {
 
     @OneToMany
     @JoinColumn(name = "product_id")
-    private List<OrderContent> products;
+    private List<OrderItems> products;
 
     @Override
     public String toString() {

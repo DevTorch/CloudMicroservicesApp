@@ -1,9 +1,9 @@
 package springcloudms.orderservice.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +19,9 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Schema(description = "Товары в заказе")
-public class OrderContent {
+@Schema(name = "OrderItems", description = "Товары в заказе")
+@Table(name = "order_items")
+public class OrderItems {
     @Id
     private String articleNo;
     @NotNull
@@ -37,7 +38,7 @@ public class OrderContent {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        OrderContent that = (OrderContent) o;
+        OrderItems that = (OrderItems) o;
         return getArticleNo() != null && Objects.equals(getArticleNo(), that.getArticleNo());
     }
 

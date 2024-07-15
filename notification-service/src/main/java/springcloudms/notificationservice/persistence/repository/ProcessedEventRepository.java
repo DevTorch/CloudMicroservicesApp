@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface ProcessedEventRepository extends JpaRepository<ProcessEventEntity, String> {
 
-    Optional<ProcessEventEntity>  findByMessageId(String messageId);
+    Optional<ProcessEventEntity> findByMessageId(String messageId);
 
     Optional<ProcessEventEntity> findByArticleNo(String articleNo);
 }
