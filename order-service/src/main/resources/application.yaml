@@ -31,6 +31,8 @@ spring:
     consumer:
       bootstrap-servers: localhost:9092,localhost:9094
       group-id: cloudmicroservices-consumer-group
+      isolation-level: READ_COMMITTED
+      auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: "springcloudms.orderservice.events"
         spring.json.type.mapping: "{springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent:springcloudms.orderservice.events.handler.OrderEventsHandler}"

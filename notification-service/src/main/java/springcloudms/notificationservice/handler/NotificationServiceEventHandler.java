@@ -19,9 +19,12 @@ import springcloudms.notificationservice.persistence.service.ProcessedEventsServ
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@KafkaListener(topics = {CoreConstants.PRODUCT_CREATED_EVENTS_TOPIC}, groupId = CoreConstants.GROUP_ID)
+@KafkaListener(topics = {
+        CoreConstants.PRODUCT_CREATED_EVENTS_TOPIC,
+        CoreConstants.CUSTOMER_ACTIVITY_EVENTS_TOPIC},
+        groupId = CoreConstants.GROUP_ID)
 //@KafkaListener(topics = {"product-created-events-topic"}, groupId = "cloudmicroservices-consumer-group")
-public class InventoryProductCreatedEventHandler {
+public class NotificationServiceEventHandler {
 
     private final RestTemplate restTemplate;
     private final ProcessedEventsService processedEventsService;
@@ -78,5 +81,10 @@ public class InventoryProductCreatedEventHandler {
     @KafkaHandler
     public void handleNewElectronics(AddNewElectronicsEvent event) {
         log.info("New Electronics created events received: {}", event.title());
+    }
+
+    //TODO Регистрация, логин, такое
+    public void handleCustomerActivityEvents(){
+        log.info("Customer activity events received: ");
     }
 }

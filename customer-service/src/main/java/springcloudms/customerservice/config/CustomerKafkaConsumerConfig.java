@@ -51,7 +51,8 @@ public class CustomerKafkaConsumerConfig {
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, CustomerCreateRequestEvent.class.getCanonicalName());
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
 
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "springcloudms.*");
+        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "READ_COMMITTED".toLowerCase()); //Это фича с регистром
         return new DefaultKafkaConsumerFactory<>(props);
     }
 

@@ -5,9 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import springcloudms.authservice.dto.account.request.AccountLoginRequestDTO;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
@@ -22,12 +22,12 @@ import springcloudms.authservice.repository.RoleRepository;
 import springcloudms.authservice.service.AccountService;
 import springcloudms.core.constants.CoreConstants;
 
+import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -40,17 +40,17 @@ public class AccountServiceImpl implements AccountService {
     private final RoleRepository roleRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Boolean isAccountExists(Long accountId) {
         return accountRepository.findById(accountId).isPresent() ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Optional<AccountResponseDTO> findAccountById(Long accountId) {
 
-        log.info("findAccountById: {}", accountRepository.findById(accountId).toString());
+        log.info("findAccountById: {}", accountRepository.findById(accountId));
 
         return accountRepository.findById(accountId)
                 .map(account -> AccountResponseDTO.builder()
@@ -61,8 +61,8 @@ public class AccountServiceImpl implements AccountService {
                         .build());
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<AccountResponseDTO> getAllAccounts() {
         return accountRepository.findAll()
                 .stream()
@@ -75,8 +75,8 @@ public class AccountServiceImpl implements AccountService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Optional<AccountResponseDTO> findAccountByCredentials(AccountLoginRequestDTO loginRequestDTO) {
 
         if (accountRepository.findByEmail(loginRequestDTO.email()).isEmpty()) {
@@ -86,18 +86,18 @@ public class AccountServiceImpl implements AccountService {
         //TODO: Переделать: сначала проверяем почту, потом по паролю (а далее encoder.match)
 
         return accountRepository.findByEmailAndPassword(loginRequestDTO.email(), loginRequestDTO.password())
-                .map(account -> {
-                    return AccountResponseDTO.builder()
-                            .id(account.getId())
-                            .email(account.getEmail())
-                            .roles(account.getRoles())
-                            .isActive(account.getActive())
-                            .build();
-                });
+                .map(account -> AccountResponseDTO.builder()
+                        .id(account.getId())
+                        .email(account.getEmail())
+                        .roles(account.getRoles())
+                        .isActive(account.getActive())
+                        .build());
     }
 
-    @Transactional
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, //НЕ ЗАБЫВАЙ о том, как роллбэчить транзакции
+            rollbackFor = {ConnectException.class, ExecutionException.class, KafkaSenderException.class},
+            noRollbackFor = {NullPointerException.class})
     public void createNewAccount(AccountSignUpDTO accountSignUpDTO) {
 
         Account account = new Account();
@@ -105,14 +105,10 @@ public class AccountServiceImpl implements AccountService {
         account.setPassword(bCrypt.encode(accountSignUpDTO.password()));
         account.setRoles(Collections.singleton(roleRepository.findRoleByName(RoleNameEnum.valueOf("USER"))));
         account.setActive(Boolean.TRUE);
+
         var savedAccount = accountRepository.save(account);
 
-        var savedAccountId = savedAccount.getId();
-
-        log.info("Account: {}", savedAccount);
-
-        //TODO Check fields
-        //TODO Kafka Producer Send
+        //Подготовка первой транзакции/отправки
         CustomerCreateRequestEvent customerCreateEvent = CustomerCreateRequestEvent.builder()
                 .accountId(savedAccount.getId())
                 .fullName(accountSignUpDTO.fullName())
@@ -122,11 +118,8 @@ public class AccountServiceImpl implements AccountService {
                         : accountSignUpDTO.persistDateTime())
                 .build();
 
-//        String signUpTopic = "customer-signup-events-topic";
-        String signUpTopic = CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC;
-
         ProducerRecord<String, Object> newCustomerRecord = new ProducerRecord<>(
-                signUpTopic,
+                CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC,
                 String.valueOf(customerCreateEvent.accountId()),
                 customerCreateEvent);
 
@@ -135,22 +128,9 @@ public class AccountServiceImpl implements AccountService {
                 .add("messageKey", customerCreateEvent.accountId().toString().getBytes())
                 .add("eventType", "NewCustomerCreatedEvent".getBytes());
 
-        //TODO Kafka Transaction #1
-
-        try {
-
-            SendResult<String, Object> sendResult = kafkaTemplate.send(newCustomerRecord).get();
-
-            log.info("SendResult {} ", sendResult.getRecordMetadata());
-//            log.info("SendResult {} ", new ObjectMapper().writeValueAsString(sendResult.getRecordMetadata()));
-
-        } catch (InterruptedException | ExecutionException e) {
-
-            throw new KafkaSenderException(String.format("Failed to send message to topic %s", signUpTopic), e);
-        }
-
+        //Подготовка второй транзакции/отправки
         OrderAccountCreateRequestEvent orderRequestEvent = OrderAccountCreateRequestEvent.builder()
-                .accountId(savedAccountId)
+                .accountId(savedAccount.getId())
                 .createdTimeStamp(LocalDateTime.now())
                 .build();
 
@@ -165,28 +145,30 @@ public class AccountServiceImpl implements AccountService {
                 .add("timestamp", LocalDateTime.now().toString().getBytes())
                 .add("eventType", "NewOrderAccountCreatedEvent".getBytes());
 
-        //TODO Kafka Transaction #2
+        //TODO kafkaTransactionManager.executeInTransaction()
+        try {
 
-        final CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(newOrderRecord);
+            //TODO Kafka Transaction #1
+            var sendResult = kafkaTemplate.send(newCustomerRecord).get();
+            log.info("SendResult First Transaction {} ", sendResult.getRecordMetadata());
 
-        future.whenComplete(
-                (result, ex) -> {
-                    if (ex == null) {
-                        log.info("Successful! SendResult {} ", result.getRecordMetadata());
-                    } else {
-                        log.error("Failed! Cause {} ", ex.getMessage());
-                    }
-                });
+            //TODO Kafka Transaction #2
+            var accountOrderSendResult = kafkaTemplate.send(newOrderRecord).get();
+            log.info("SendResult Second Transaction {} ", accountOrderSendResult.getRecordMetadata());
+
+        } catch (InterruptedException | ExecutionException e) {
+            throw new KafkaSenderException(String.format("Failed to send message %s", e));
+        }
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Optional<Account> findAccountByEmail(String email) {
         return accountRepository.findByEmail(email);
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public Optional<Long> findAccountIdByEmail(String email) {
         return Optional.ofNullable(accountRepository.findAccountIdByEmail(email));
     }

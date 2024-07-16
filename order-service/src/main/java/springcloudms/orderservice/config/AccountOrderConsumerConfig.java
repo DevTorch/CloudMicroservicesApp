@@ -46,6 +46,7 @@ public class AccountOrderConsumerConfig {
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderAccountCreateRequestEvent.class.getCanonicalName());
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(JsonDeserializer.TRUSTED_PACKAGES, environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
+        props.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "READ_COMMITTED".toLowerCase());
 
         return new DefaultKafkaConsumerFactory<>(props);
     }
