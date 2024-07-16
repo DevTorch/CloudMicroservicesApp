@@ -9,6 +9,7 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import springcloudms.core.constants.CoreConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,8 @@ public class KafkaProducerConfig {
 
     @Bean
     NewTopic createTopic() {
-        return TopicBuilder.name("product-created-events-topic")
+        return TopicBuilder.name(CoreConstants.PRODUCT_CREATED_EVENTS_TOPIC)
+//        return TopicBuilder.name("product-created-events-topic")
                 .partitions(3)
                 .replicas(3) //1 leader, 2 followers
                 .configs(Map.of("min.insync.replicas", "2")) //2 servers is synchronized

@@ -10,7 +10,8 @@ import springcloudms.orderservice.exception.InventoryExistException;
 
 @FeignClient(name = "inventory-service",
         fallbackFactory = InventoryFeignClient.InventoryFeignClientFallback.class,
-        url = "${inventory-service.host}", path = "/api/inventory")
+//        url = "${inventory-service.host}",
+        path = "/api/inventory")
 public interface InventoryFeignClient {
 
     @GetMapping("/product/instock")

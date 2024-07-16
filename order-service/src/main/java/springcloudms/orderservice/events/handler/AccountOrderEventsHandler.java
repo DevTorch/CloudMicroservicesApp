@@ -2,11 +2,13 @@ package springcloudms.orderservice.events.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import springcloudms.core.constants.CoreConstants;
 import springcloudms.orderservice.events.OrderAccountCreateRequestEvent;
 import springcloudms.orderservice.events.entity.AccountOrderProcessedEvent;
 import springcloudms.orderservice.events.service.MessageStorageService;
@@ -18,14 +20,14 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@KafkaListener(topics = {"customer-shopping-cart-events-topic"}, groupId = "cloudmicroservices-consumer-group")
-public class OrderEventsHandler {
+@KafkaListener(topics = CoreConstants.ACCOUNT_ORDER_EVENTS_TOPIC, groupId = CoreConstants.GROUP_ID)
+public class AccountOrderEventsHandler {
 
     private final MessageStorageService messageService;
     private final OrderService orderService;
 
-    @KafkaListener
-    public void handleOrderAccountEvent(
+    @KafkaHandler
+    public void handleAccountOrderCreateEvent(
             @Payload OrderAccountCreateRequestEvent event,
             @Header("messageId") String messageId,
             @Header(KafkaHeaders.RECEIVED_KEY) String messageKey,
@@ -52,7 +54,6 @@ public class OrderEventsHandler {
                         : event.createdTimeStamp())
                 .build();
 
-        //TODO прочекать место создания ордера
         orderService.createAccountOrder(accountOrder);
     }
 

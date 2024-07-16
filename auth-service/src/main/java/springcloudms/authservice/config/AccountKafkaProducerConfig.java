@@ -12,6 +12,9 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import springcloudms.authservice.dto.customer.CustomerCreateRequestEvent;
+import springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent;
+import springcloudms.core.constants.CoreConstants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +47,8 @@ public class AccountKafkaProducerConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(JsonSerializer.TYPE_MAPPINGS, CustomerCreateRequestEvent.class.getCanonicalName() + ":springcloudms.authservice.dto.customer.CustomerCreateRequestEvent, "
+        + OrderAccountCreateRequestEvent.class.getCanonicalName() + ":springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent");
         props.put(ProducerConfig.ACKS_CONFIG, acknowledgement);
         props.put(ProducerConfig.LINGER_MS_CONFIG, linger);
         props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeout);
@@ -61,22 +66,22 @@ public class AccountKafkaProducerConfig {
 
     @Bean
     NewTopic createSignUpTopic() {
-        String signUpTopic = "customer-signup-event-topic";
-        return TopicBuilder.name(signUpTopic)
+//        String signUpTopic = "customer-signup-events-topic";
+        return TopicBuilder.name(CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC)
                 .partitions(3)
-                .replicas(3) //1 leader, 2 followers
-                .configs(Map.of("min.insync.replicas", "2")) //2 servers is synchronized
+                .replicas(2) //1 leader, 2 followers
+                .configs(Map.of("min.insync.replicas", "1")) //2 servers is synchronized
                 .compact()
                 .build();
     }
 
     @Bean
     NewTopic createShoppingCartTopic() {
-        String shoppingCart = "customer-shopping-cart-event-topic";
-        return TopicBuilder.name(shoppingCart)
+//        String shoppingCart = "customer-shopping-cart-events-topic";
+        return TopicBuilder.name(CoreConstants.ACCOUNT_ORDER_EVENTS_TOPIC)
                 .partitions(3)
-                .replicas(3) //1 leader, 2 followers
-                .configs(Map.of("min.insync.replicas", "2")) //2 servers is synchronized
+                .replicas(2) //1 leader, 1 followers
+                .configs(Map.of("min.insync.replicas", "1")) //2 servers is synchronized
                 .compact()
                 .build();
     }

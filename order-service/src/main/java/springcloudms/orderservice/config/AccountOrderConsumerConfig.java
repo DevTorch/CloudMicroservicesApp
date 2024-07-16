@@ -1,10 +1,10 @@
 package springcloudms.orderservice.config;
 
-import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -20,17 +20,18 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
+import springcloudms.orderservice.events.OrderAccountCreateRequestEvent;
 import springcloudms.orderservice.exception.NonRetryableException;
 import springcloudms.orderservice.exception.RetryableException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
 @Configuration
-public class KafkaOrderConsumerConfig {
+public class AccountOrderConsumerConfig {
 
-    private final Environment environment;
+    @Autowired
+    private Environment environment;
 
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
@@ -41,6 +42,9 @@ public class KafkaOrderConsumerConfig {
         props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+        props.put(JsonDeserializer.TYPE_MAPPINGS, OrderAccountCreateRequestEvent.class.getCanonicalName() + ":springcloudms.orderservice.events.OrderAccountCreateRequestEvent");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, OrderAccountCreateRequestEvent.class.getCanonicalName());
+        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(JsonDeserializer.TRUSTED_PACKAGES, environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
 
         return new DefaultKafkaConsumerFactory<>(props);
@@ -76,6 +80,11 @@ public class KafkaOrderConsumerConfig {
         Map<String, Object> producerConfig = new HashMap<>();
 
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty("spring.kafka.consumer.bootstrap-servers"));
+        producerConfig.put(ProducerConfig.RETRIES_CONFIG, 0);
+        producerConfig.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        producerConfig.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        producerConfig.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+        producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 

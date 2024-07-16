@@ -26,7 +26,6 @@ spring:
     enabled: true
     change-log: db/changelog/db.changelog-master.yaml
 
-
 #Kafka Consumer Config
   kafka:
     consumer:

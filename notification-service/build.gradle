@@ -30,7 +30,8 @@ repositories {
 
 
 dependencies {
-//    implementation(project(':core'))
+    implementation(project(':core'))
+//    implementation 'CloudMicroservicesApp:core'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.kafka:spring-kafka'

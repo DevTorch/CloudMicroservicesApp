@@ -30,15 +30,15 @@ spring:
   kafka:
     producer:
       acks: all
-      bootstrap-servers: localhost:9092,localhost:9094
+      bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         enable.idempotence: true
         max.in.flight.requests.per.connection: 5
-        delivery.timeout.ms: 10000
-        linger.ms: 0
-        request.timeout.ms: 5000
+        delivery.timeout.ms: 21000
+        linger.ms: 1
+        request.timeout.ms: 20000
 
   cloud:
     openfeign:
@@ -63,4 +63,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka
 logging:
   file:
-    path: classpath:logs/auth-service.log
+    path: classpath:/resources/logs/auth-service.log

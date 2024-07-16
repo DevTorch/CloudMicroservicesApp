@@ -34,10 +34,9 @@ spring:
   kafka:
     consumer:
       group-id: cloudmicroservices-consumer-group
-      bootstrap-servers: localhost:9092,localhost:9094
+      bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
       properties:
-        spring.json.trusted.packages: "springcloudms.customerservice.*"
-        spring.json.type.mapping: "{springcloudms.authservice.dto.customer.CustomerCreateRequestEvent:springcloudms.customerservice.events.CustomerCreateRequestEvent}"
+        spring.json.trusted.packages: "*"
         auto.create.topics.enable: false
 springdoc:
   api-docs:

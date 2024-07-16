@@ -1,7 +1,6 @@
 package springcloudms.authservice.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -9,26 +8,26 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import springcloudms.authservice.dto.account.request.AccountLoginRequestDTO;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
 import springcloudms.authservice.dto.customer.CustomerCreateRequestEvent;
 import springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent;
-import springcloudms.authservice.feign.CustomerServiceFeignClient;
+import springcloudms.authservice.exception.KafkaSenderException;
 import springcloudms.authservice.model.Account;
 import springcloudms.authservice.model.RoleNameEnum;
 import springcloudms.authservice.repository.AccountRepository;
 import springcloudms.authservice.repository.RoleRepository;
 import springcloudms.authservice.service.AccountService;
-import springcloudms.authservice.exception.KafkaSenderException;
+import springcloudms.core.constants.CoreConstants;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -123,7 +122,8 @@ public class AccountServiceImpl implements AccountService {
                         : accountSignUpDTO.persistDateTime())
                 .build();
 
-        String signUpTopic = "customer-signup-event-topic";
+//        String signUpTopic = "customer-signup-events-topic";
+        String signUpTopic = CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC;
 
         ProducerRecord<String, Object> newCustomerRecord = new ProducerRecord<>(
                 signUpTopic,
@@ -142,9 +142,9 @@ public class AccountServiceImpl implements AccountService {
             SendResult<String, Object> sendResult = kafkaTemplate.send(newCustomerRecord).get();
 
             log.info("SendResult {} ", sendResult.getRecordMetadata());
-            log.info("SendResult {} ", new ObjectMapper().writeValueAsString(sendResult.getRecordMetadata()));
+//            log.info("SendResult {} ", new ObjectMapper().writeValueAsString(sendResult.getRecordMetadata()));
 
-        } catch (InterruptedException | ExecutionException | JsonProcessingException e) {
+        } catch (InterruptedException | ExecutionException e) {
 
             throw new KafkaSenderException(String.format("Failed to send message to topic %s", signUpTopic), e);
         }
@@ -154,9 +154,9 @@ public class AccountServiceImpl implements AccountService {
                 .createdTimeStamp(LocalDateTime.now())
                 .build();
 
-        String shoppingCartTopic = "customer-shopping-cart-event-topic";
+        String accountOrderTopic = CoreConstants.ACCOUNT_ORDER_EVENTS_TOPIC;
         ProducerRecord<String, Object> newOrderRecord = new ProducerRecord<>(
-                shoppingCartTopic,
+                accountOrderTopic,
                 String.valueOf(orderRequestEvent.accountId()),
                 orderRequestEvent);
 
@@ -167,18 +167,16 @@ public class AccountServiceImpl implements AccountService {
 
         //TODO Kafka Transaction #2
 
-        try {
+        final CompletableFuture<SendResult<String, Object>> future = kafkaTemplate.send(newOrderRecord);
 
-            SendResult<String, Object> sendResult = kafkaTemplate.send(newOrderRecord).get();
-
-            log.info("Transaction 2 Metadata {} ", sendResult.getRecordMetadata());
-            log.info("Transaction 2 Content {} ", new ObjectMapper().writeValueAsString(sendResult.getRecordMetadata()));
-
-        } catch (InterruptedException | ExecutionException | JsonProcessingException e) {
-
-            throw new KafkaSenderException(String.format("Failed to send message to topic %s", signUpTopic), e);
-        }
-
+        future.whenComplete(
+                (result, ex) -> {
+                    if (ex == null) {
+                        log.info("Successful! SendResult {} ", result.getRecordMetadata());
+                    } else {
+                        log.error("Failed! Cause {} ", ex.getMessage());
+                    }
+                });
     }
 
     @Transactional(readOnly = true)

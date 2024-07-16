@@ -12,7 +12,8 @@ public record CustomerCreateRequestEvent(
         @NotNull Long accountId,
         @NotBlank String fullName,
         @NotBlank String nickname,
-        @JsonFormat(pattern = "dd.MM.yyyy")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+//        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDateTime persistDateTime
 ) {
 }

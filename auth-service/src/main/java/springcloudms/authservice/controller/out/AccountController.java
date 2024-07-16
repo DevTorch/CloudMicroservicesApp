@@ -18,6 +18,7 @@ import springcloudms.authservice.exception.KafkaSenderException;
 import springcloudms.authservice.service.AccountService;
 import springcloudms.authservice.service.impl.AccountServiceImpl;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 
 @RequiredArgsConstructor
@@ -50,9 +51,13 @@ public class AccountController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) {
+    public ResponseEntity<String> signUp(@RequestBody AccountSignUpDTO accountSignUpDTO) {
         log.info("signUp: {}", accountSignUpDTO.toString());
-        accountService.createNewAccount(accountSignUpDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try {
+            accountService.createNewAccount(accountSignUpDTO);
+            return new ResponseEntity<>("Account created successfully", HttpStatus.CREATED);
+        } catch (KafkaSenderException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

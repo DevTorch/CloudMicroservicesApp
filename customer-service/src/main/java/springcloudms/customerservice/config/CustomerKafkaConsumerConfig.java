@@ -1,10 +1,11 @@
 package springcloudms.customerservice.config;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -20,28 +21,37 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
+import springcloudms.customerservice.events.CustomerCreateRequestEvent;
 import springcloudms.customerservice.exception.NonRetryableException;
 import springcloudms.customerservice.exception.RetryableException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@Slf4j
 @Configuration
 public class CustomerKafkaConsumerConfig {
 
-    private final Environment environment;
+    @Autowired
+    private Environment environment;
 
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty("spring.kafka.consumer.bootstrap-servers"));
         props.put(ConsumerConfig.GROUP_ID_CONFIG, environment.getProperty("spring.kafka.consumer.group-id"));
+
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
+
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
+        props.put((JsonDeserializer.TYPE_MAPPINGS), CustomerCreateRequestEvent.class.getCanonicalName() + ":springcloudms.customerservice.events.CustomerCreateRequestEvent");
+
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, CustomerCreateRequestEvent.class.getCanonicalName());
+        props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
@@ -75,6 +85,11 @@ public class CustomerKafkaConsumerConfig {
         Map<String, Object> producerConfig = new HashMap<>();
 
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty("spring.kafka.consumer.bootstrap-servers"));
+        producerConfig.put(ProducerConfig.RETRIES_CONFIG, 0);
+        producerConfig.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        producerConfig.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        producerConfig.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+        producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
         producerConfig.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerConfig.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
