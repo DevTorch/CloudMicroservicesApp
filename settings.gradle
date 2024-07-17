@@ -1,5 +1,4 @@
 rootProject.name = 'CloudMicroservicesApp'
-
 include 'core'
 include 'api-gateway'
 include 'auth-service'

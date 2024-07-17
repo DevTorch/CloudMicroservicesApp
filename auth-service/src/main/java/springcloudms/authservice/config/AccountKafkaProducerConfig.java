@@ -1,5 +1,6 @@
 package springcloudms.authservice.config;
 
+import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -13,6 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.kafka.transaction.KafkaTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import springcloudms.authservice.dto.customer.CustomerCreateRequestEvent;
 import springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent;
 import springcloudms.core.constants.CoreConstants;
@@ -70,16 +72,28 @@ public class AccountKafkaProducerConfig {
     }
 
     @Bean
-    KafkaTransactionManager<String, Object> transactionManager(ProducerFactory<String, Object> producerFactory) {
+    KafkaTransactionManager<String, Object> kafkaTransactionManager(ProducerFactory<String, Object> producerFactory) {
         return new KafkaTransactionManager<>(producerFactory);
     }
+
+    @Bean("transactionManager")
+    JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
+
+//    @Bean("transactionManager")
+//    public PlatformTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+//        JpaTransactionManager transactionManager = new JpaTransactionManager();
+//        transactionManager.setEntityManagerFactory(entityManagerFactory);
+//        return transactionManager;
+//    }
 
     @Bean
     NewTopic createSignUpTopic() {
         return TopicBuilder.name(CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC)
                 .partitions(3)
-                .replicas(2) //1 leader, 2 followers
-                .configs(Map.of("min.insync.replicas", "1")) //2 servers is synchronized
+                .replicas(3) //1 leader, 2 followers
+                .configs(Map.of("min.insync.replicas", "2")) //2 servers is synchronized
                 .compact()
                 .build();
     }
@@ -88,19 +102,19 @@ public class AccountKafkaProducerConfig {
     NewTopic createShoppingCartTopic() {
         return TopicBuilder.name(CoreConstants.ACCOUNT_ORDER_EVENTS_TOPIC)
                 .partitions(3)
-                .replicas(2) //1 leader, 1 followers
-                .configs(Map.of("min.insync.replicas", "1")) //2 servers is synchronized
+                .replicas(3) //1 leader, 1 followers
+                .configs(Map.of("min.insync.replicas", "2")) //2 servers is synchronized
                 .compact()
                 .build();
     }
 
-    @Bean
-    NewTopic createCustomerActivityTopic() {
-        return TopicBuilder.name(CoreConstants.CUSTOMER_ACTIVITY_EVENTS_TOPIC)
-                .partitions(3)
-                .replicas(2) //1 leader, 1 followers
-                .configs(Map.of("min.insync.replicas", "1")) //2 servers is synchronized
-                .compact()
-                .build();
-    }
+//    @Bean
+//    NewTopic createCustomerActivityTopic() {
+//        return TopicBuilder.name(CoreConstants.CUSTOMER_ACTIVITY_EVENTS_TOPIC)
+//                .partitions(2)
+//                .replicas(1) //1 leader, 1 followers
+//                .configs(Map.of("min.insync.replicas", "1")) //2 servers is synchronized
+//                .compact()
+//                .build();
+//    }
 }

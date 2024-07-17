@@ -13,23 +13,7 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
-    withSourcesJar()
 }
-
-//publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            groupId = 'CloudMicroservicesApp'
-//            artifactId = 'core'
-//            version = '0.0.1-SNAPSHOT'
-//            from components.java
-//        }
-//    }
-//
-//    repositories {
-//        mavenLocal()
-//    }
-//}
 
 configurations {
     compileOnly {
@@ -38,21 +22,20 @@ configurations {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 //    implementation 'org.springframework.kafka:spring-kafka'
 //    testImplementation 'org.springframework.kafka:spring-kafka-test'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {

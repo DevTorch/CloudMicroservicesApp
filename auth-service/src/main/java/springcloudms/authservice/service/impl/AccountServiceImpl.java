@@ -7,7 +7,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import springcloudms.authservice.dto.account.request.AccountLoginRequestDTO;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
@@ -22,7 +21,6 @@ import springcloudms.authservice.repository.RoleRepository;
 import springcloudms.authservice.service.AccountService;
 import springcloudms.core.constants.CoreConstants;
 
-import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -41,13 +39,13 @@ public class AccountServiceImpl implements AccountService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManager", readOnly = true)
     public Boolean isAccountExists(Long accountId) {
         return accountRepository.findById(accountId).isPresent() ? Boolean.TRUE : Boolean.FALSE;
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManager", readOnly = true)
     public Optional<AccountResponseDTO> findAccountById(Long accountId) {
 
         log.info("findAccountById: {}", accountRepository.findById(accountId));
@@ -62,7 +60,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManager", readOnly = true)
     public List<AccountResponseDTO> getAllAccounts() {
         return accountRepository.findAll()
                 .stream()
@@ -76,7 +74,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManager", readOnly = true)
     public Optional<AccountResponseDTO> findAccountByCredentials(AccountLoginRequestDTO loginRequestDTO) {
 
         if (accountRepository.findByEmail(loginRequestDTO.email()).isEmpty()) {
@@ -95,9 +93,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, //НЕ ЗАБЫВАЙ о том, как роллбэчить транзакции
-            rollbackFor = {ConnectException.class, ExecutionException.class, KafkaSenderException.class},
-            noRollbackFor = {NullPointerException.class})
+//    @Transactional(value = "transactionManager", //НЕ ЗАБЫВАЙ о том, как роллбэчить транзакции
+//            rollbackFor = {ConnectException.class, ExecutionException.class, KafkaSenderException.class},
+//            noRollbackFor = {NullPointerException.class})
+    @Transactional("transactionManager")
     public void createNewAccount(AccountSignUpDTO accountSignUpDTO) {
 
         Account account = new Account();
@@ -106,47 +105,48 @@ public class AccountServiceImpl implements AccountService {
         account.setRoles(Collections.singleton(roleRepository.findRoleByName(RoleNameEnum.valueOf("USER"))));
         account.setActive(Boolean.TRUE);
 
-        var savedAccount = accountRepository.save(account);
-
-        //Подготовка первой транзакции/отправки
-        CustomerCreateRequestEvent customerCreateEvent = CustomerCreateRequestEvent.builder()
-                .accountId(savedAccount.getId())
-                .fullName(accountSignUpDTO.fullName())
-                .nickname(accountSignUpDTO.nickname())
-                .persistDateTime(accountSignUpDTO.persistDateTime() == null
-                        ? LocalDateTime.now()
-                        : accountSignUpDTO.persistDateTime())
-                .build();
-
-        ProducerRecord<String, Object> newCustomerRecord = new ProducerRecord<>(
-                CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC,
-                String.valueOf(customerCreateEvent.accountId()),
-                customerCreateEvent);
-
-        newCustomerRecord.headers()
-                .add("messageId", UUID.randomUUID().toString().getBytes())
-                .add("messageKey", customerCreateEvent.accountId().toString().getBytes())
-                .add("eventType", "NewCustomerCreatedEvent".getBytes());
-
-        //Подготовка второй транзакции/отправки
-        OrderAccountCreateRequestEvent orderRequestEvent = OrderAccountCreateRequestEvent.builder()
-                .accountId(savedAccount.getId())
-                .createdTimeStamp(LocalDateTime.now())
-                .build();
-
-        String accountOrderTopic = CoreConstants.ACCOUNT_ORDER_EVENTS_TOPIC;
-        ProducerRecord<String, Object> newOrderRecord = new ProducerRecord<>(
-                accountOrderTopic,
-                String.valueOf(orderRequestEvent.accountId()),
-                orderRequestEvent);
-
-        newOrderRecord.headers()
-                .add("messageId", UUID.randomUUID().toString().getBytes())
-                .add("timestamp", LocalDateTime.now().toString().getBytes())
-                .add("eventType", "NewOrderAccountCreatedEvent".getBytes());
-
         //TODO kafkaTransactionManager.executeInTransaction()
         try {
+
+            var savedAccount = accountRepository.save(account);
+
+            //Подготовка первой транзакции/отправки
+            CustomerCreateRequestEvent customerCreateEvent = CustomerCreateRequestEvent.builder()
+                    .accountId(savedAccount.getId())
+                    .fullName(accountSignUpDTO.fullName())
+                    .nickname(accountSignUpDTO.nickname())
+                    .persistDateTime(accountSignUpDTO.persistDateTime() == null
+                            ? LocalDateTime.now()
+                            : accountSignUpDTO.persistDateTime())
+                    .build();
+
+            ProducerRecord<String, Object> newCustomerRecord = new ProducerRecord<>(
+                    CoreConstants.CUSTOMER_SIGNUP_EVENTS_TOPIC,
+                    String.valueOf(customerCreateEvent.accountId()),
+                    customerCreateEvent);
+
+            newCustomerRecord.headers()
+                    .add("messageId", UUID.randomUUID().toString().getBytes())
+                    .add("messageKey", customerCreateEvent.accountId().toString().getBytes())
+                    .add("eventType", "NewCustomerCreatedEvent".getBytes());
+
+            //Подготовка второй транзакции/отправки
+            OrderAccountCreateRequestEvent orderRequestEvent = OrderAccountCreateRequestEvent.builder()
+                    .accountId(savedAccount.getId())
+                    .createdTimeStamp(LocalDateTime.now())
+                    .build();
+
+            String accountOrderTopic = CoreConstants.ACCOUNT_ORDER_EVENTS_TOPIC;
+            ProducerRecord<String, Object> newOrderRecord = new ProducerRecord<>(
+                    accountOrderTopic,
+                    String.valueOf(orderRequestEvent.accountId()),
+                    orderRequestEvent);
+
+            newOrderRecord.headers()
+                    .add("messageId", UUID.randomUUID().toString().getBytes())
+                    .add("timestamp", LocalDateTime.now().toString().getBytes())
+                    .add("eventType", "NewOrderAccountCreatedEvent".getBytes());
+
 
             //TODO Kafka Transaction #1
             var sendResult = kafkaTemplate.send(newCustomerRecord).get();
@@ -162,13 +162,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManager", readOnly = true)
     public Optional<Account> findAccountByEmail(String email) {
         return accountRepository.findByEmail(email);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(value = "transactionManager", readOnly = true)
     public Optional<Long> findAccountIdByEmail(String email) {
         return Optional.ofNullable(accountRepository.findAccountIdByEmail(email));
     }

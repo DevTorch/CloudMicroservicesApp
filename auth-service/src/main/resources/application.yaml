@@ -30,15 +30,15 @@ spring:
   kafka:
     producer:
       acks: all
-      bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
+      bootstrap-servers: localhost:9092,localhost:9094,localhost:9096,localhost:9098
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      transaction-id-prefix: auth-service-${random.uuid}-
+      transaction-id-prefix: auth-service-${random.int(1000)}-
       properties:
         enable.idempotence: true
         max.in.flight.requests.per.connection: 5
         delivery.timeout.ms: 21000
-        linger.ms: 1
+        linger.ms: 0
         request.timeout.ms: 20000
 
   cloud:
@@ -65,7 +65,11 @@ eureka:
 
 logging:
   level:
-    org.springframework.kafka.transaction: TRACE
-    org.springframework.transaction: TRACE
+    org.springframework.kafka.transaction.KafkaTransactionManager: DEBUG
+    org.springframework.transaction: DEBUG
+    org.springframework.orm.jpa.JpaTransactionManager: DEBUG
+    org.apache.kafka.clients.producer.internals.TransactionManager: DEBUG
   file:
-    path: classpath:/resources/logs/auth-service.log
+    name: auth-service.log
+#    path: classpath:/resources/logs/auth-service.log
+
