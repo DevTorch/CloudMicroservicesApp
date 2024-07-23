@@ -13,6 +13,7 @@ import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
 import springcloudms.authservice.dto.customer.CustomerCreateRequestEvent;
 import springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent;
+import springcloudms.authservice.exception.AccountNotFoundException;
 import springcloudms.authservice.exception.KafkaSenderException;
 import springcloudms.authservice.model.Account;
 import springcloudms.authservice.model.RoleNameEnum;
@@ -46,17 +47,23 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(value = "transactionManager", readOnly = true)
-    public Optional<AccountResponseDTO> findAccountById(Long accountId) {
+    public Optional<AccountResponseDTO> findAccountById(Long accountId) throws AccountNotFoundException {
 
         log.info("findAccountById: {}", accountRepository.findById(accountId));
 
-        return accountRepository.findById(accountId)
+        Optional<AccountResponseDTO> accountResponseDTO = accountRepository.findById(accountId)
                 .map(account -> AccountResponseDTO.builder()
                         .id(account.getId())
                         .email(account.getEmail())
                         .roles(account.getRoles())
                         .isActive(account.getActive())
                         .build());
+
+        if (accountResponseDTO.isPresent()) {
+            return accountResponseDTO;
+        } else {
+            throw new AccountNotFoundException(String.format("Account not found %s: ", accountId));
+        }
     }
 
     @Override
@@ -105,12 +112,10 @@ public class AccountServiceImpl implements AccountService {
         account.setRoles(Collections.singleton(roleRepository.findRoleByName(RoleNameEnum.valueOf("USER"))));
         account.setActive(Boolean.TRUE);
 
-        //TODO kafkaTransactionManager.executeInTransaction()
         try {
 
             var savedAccount = accountRepository.save(account);
 
-            //Подготовка первой транзакции/отправки
             CustomerCreateRequestEvent customerCreateEvent = CustomerCreateRequestEvent.builder()
                     .accountId(savedAccount.getId())
                     .fullName(accountSignUpDTO.fullName())
@@ -130,7 +135,6 @@ public class AccountServiceImpl implements AccountService {
                     .add("messageKey", customerCreateEvent.accountId().toString().getBytes())
                     .add("eventType", "NewCustomerCreatedEvent".getBytes());
 
-            //Подготовка второй транзакции/отправки
             OrderAccountCreateRequestEvent orderRequestEvent = OrderAccountCreateRequestEvent.builder()
                     .accountId(savedAccount.getId())
                     .createdTimeStamp(LocalDateTime.now())
