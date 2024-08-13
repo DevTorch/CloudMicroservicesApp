@@ -3,7 +3,6 @@ package springcloudms.inventoryservice.model.mapper;
 import org.springframework.stereotype.Component;
 import springcloudms.inventoryservice.model.BookEntity;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
-import springcloudms.inventoryservice.service.BookService;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -15,6 +15,12 @@ spring:
   jpa:
     show-sql: true
     database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+          highlight_sql: true
+          format_sql: true
 
   h2:
     console:

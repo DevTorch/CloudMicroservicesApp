@@ -9,7 +9,7 @@ services:
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_KRAFT_CLUSTER_ID=CloudMicroservicesApp_Cluster
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091,4@kafka-server-4:9091,5@kafka-server-5:9091,6@kafka-server-6:9091
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-1:9090,EXTERNAL://${HOSTNAME:-localhost}:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
@@ -27,9 +27,9 @@ services:
       - KAFKA_CFG_NODE_ID=2
       - KAFKA_KRAFT_CLUSTER_ID=CloudMicroservicesApp_Cluster
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091,4@kafka-server-4:9091,5@kafka-server-5:9091,6@kafka-server-6:9091
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-1:9090,EXTERNAL://${HOSTNAME:-localhost}:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-1:9092,EXTERNAL://${HOSTNAME:-localhost}:9094
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
@@ -45,7 +45,7 @@ services:
       - KAFKA_CFG_NODE_ID=3
       - KAFKA_KRAFT_CLUSTER_ID=CloudMicroservicesApp_Cluster
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091,4@kafka-server-4:9091,5@kafka-server-5:9091,6@kafka-server-6:9091
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9096
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-3:9090,EXTERNAL://${HOSTNAME:-localhost}:9096
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
@@ -54,3 +54,57 @@ services:
     volumes:
       - ./kafka-server/kraft/kafka-server-3/data:/bitnami/kafka/data
       - ./kafka-server/kraft/kafka-server-3/logs:/bitnami/kafka/logs
+
+  kafka-server-4:
+    image: bitnami/kafka:latest
+    ports:
+      - "9098:9098"
+    environment:
+      - KAFKA_CFG_NODE_ID=4
+      - KAFKA_KRAFT_CLUSTER_ID=CloudMicroservicesApp_Cluster
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091,4@kafka-server-4:9091,5@kafka-server-5:9091,6@kafka-server-6:9091
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9098
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-4:9090,EXTERNAL://${HOSTNAME:-localhost}:9098
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    volumes:
+      - ./kafka-server/kraft/kafka-server-4/data:/bitnami/kafka/data
+      - ./kafka-server/kraft/kafka-server-4/logs:/bitnami/kafka/logs
+
+  kafka-server-5:
+    image: bitnami/kafka:latest
+    ports:
+      - "9100:9100"
+    environment:
+      - KAFKA_CFG_NODE_ID=5
+      - KAFKA_KRAFT_CLUSTER_ID=CloudMicroservicesApp_Cluster
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091,4@kafka-server-4:9091,5@kafka-server-5:9091,6@kafka-server-6:9091
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9100
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-4:9090,EXTERNAL://${HOSTNAME:-localhost}:9100
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    volumes:
+      - ./kafka-server/kraft/kafka-server-5/data:/bitnami/kafka/data
+      - ./kafka-server/kraft/kafka-server-5/logs:/bitnami/kafka/logs
+
+  kafka-server-6:
+    image: bitnami/kafka:latest
+    ports:
+      - "9102:9102"
+    environment:
+      - KAFKA_CFG_NODE_ID=6
+      - KAFKA_KRAFT_CLUSTER_ID=CloudMicroservicesApp_Cluster
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-server-1:9091,2@kafka-server-2:9091,3@kafka-server-3:9091,4@kafka-server-4:9091,5@kafka-server-5:9091,6@kafka-server-6:9091
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9102
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-server-4:9090,EXTERNAL://${HOSTNAME:-localhost}:9102
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    volumes:
+      - ./kafka-server/kraft/kafka-server-6/data:/bitnami/kafka/data
+      - ./kafka-server/kraft/kafka-server-6/logs:/bitnami/kafka/logs

@@ -10,18 +10,24 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "account_order")
 public class AccountOrder {
@@ -34,8 +40,10 @@ public class AccountOrder {
     Long id;
     @Column(name = "account_id", nullable = false, updatable = false)
     Long accountId;
+    @CreationTimestamp
+    LocalDateTime createdTimeStamp;
     @OneToMany(cascade = CascadeType.ALL)
-    List<OrderComplete> orderCompletes;
+    Set<OrderComplete> orderCompletes = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {

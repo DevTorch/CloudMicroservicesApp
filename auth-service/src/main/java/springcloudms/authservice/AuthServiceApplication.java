@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
+//@EnableTransactionManagement
 public class AuthServiceApplication {
 
     public static void main(String[] args) {

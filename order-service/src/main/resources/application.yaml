@@ -22,15 +22,20 @@ spring:
     username: postgres
     password: postgres
 
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.yaml
 
 #Kafka Consumer Config
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092,localhost:9094
+      bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
       group-id: cloudmicroservices-consumer-group
+      isolation-level: READ_COMMITTED
+      auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: "springcloudms.orderservice.events"
-        spring.json.type.mapping: "springcloudms.inventoryservice.events.AddNewBookEvent:springcloudms.notificationservice.events.AddNewBookEvent"
+        spring.json.type.mapping: "{springcloudms.authservice.dto.order.OrderAccountCreateRequestEvent:springcloudms.orderservice.events.handler.OrderEventsHandler}"
         auto.create.topics.enable: false
 
   cloud:

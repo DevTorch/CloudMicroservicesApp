@@ -1,15 +1,12 @@
 package springcloudms.authservice.config;
 
 import jakarta.annotation.PostConstruct;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
-import springcloudms.authservice.exception.ServiceNotAvailableException;
 import springcloudms.authservice.service.AccountService;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Component
 public class AccountDataInitializer {
@@ -54,9 +51,9 @@ public class AccountDataInitializer {
 
         List<AccountSignUpDTO> accounts = List.of(accOne, accTwo, accThree);
 
-        accountService.createNewAccount(accOne);
-        accountService.createNewAccount(accTwo);
-        accountService.createNewAccount(accThree);
+//        accountService.createNewAccount(accOne);
+//        accountService.createNewAccount(accTwo);
+//        accountService.createNewAccount(accThree);
 
     }
 }

@@ -3,6 +3,7 @@ package springcloudms.authservice.service;
 import springcloudms.authservice.dto.account.request.AccountLoginRequestDTO;
 import springcloudms.authservice.dto.account.request.AccountSignUpDTO;
 import springcloudms.authservice.dto.account.response.AccountResponseDTO;
+import springcloudms.authservice.exception.AccountNotFoundException;
 import springcloudms.authservice.model.Account;
 
 import java.util.List;

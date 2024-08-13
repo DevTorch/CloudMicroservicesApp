@@ -10,10 +10,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @DiscriminatorValue(value = "customer")
-
 public class Customer extends BaseCustomerEntity {
 
-    @Builder
     public Customer() {
         super();
     }

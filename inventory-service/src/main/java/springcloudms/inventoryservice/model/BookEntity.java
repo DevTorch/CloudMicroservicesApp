@@ -35,8 +35,5 @@ public class BookEntity extends BaseInventoryProductEntity {
 
     @PostPersist
     public void postPersist() {
-
-
-
     }
 }

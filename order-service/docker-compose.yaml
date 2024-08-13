@@ -3,7 +3,7 @@ version: '4'
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres
+    container_name: postgres-order-service
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

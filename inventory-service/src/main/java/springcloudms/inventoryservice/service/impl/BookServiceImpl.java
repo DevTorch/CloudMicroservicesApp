@@ -97,7 +97,7 @@ public class BookServiceImpl implements BookService {
         /* SYNC CALL via .get() blocking method */
         SendResult<String, Object> result = kafkaTemplate.send(record).get();
 
-        log.info("Book event sent successfully {}: ", result.getRecordMetadata());
+        log.info("Book events sent successfully {}: ", result.getRecordMetadata());
 
 //      ASYNC CALLBACK
 //        final CompletableFuture<SendResult<String, Object>> send =
@@ -106,13 +106,13 @@ public class BookServiceImpl implements BookService {
 //        send.whenComplete(
 //                (result, ex) -> {
 //                    if (ex == null) {
-//                        log.info("Book event sent successfully {}: ", result.getRecordMetadata());
+//                        log.info("Book events sent successfully {}: ", result.getRecordMetadata());
 //
 //                        log.info("Topic: {}", result.getRecordMetadata().topic());
 //                        log.info("Partition: {}", result.getRecordMetadata().partition());
 //                        log.info("Offset: {}", result.getRecordMetadata().offset());
 //                    } else {
-//                        log.error("Book event failed to send: ", ex);
+//                        log.error("Book events failed to send: ", ex);
 //                        throw new KafkaSenderException(LocalDateTime.now(), ex.getMessage());
 //                    }
 //                });
