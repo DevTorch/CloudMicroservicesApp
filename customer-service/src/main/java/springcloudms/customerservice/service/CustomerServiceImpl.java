@@ -20,8 +20,8 @@ public class CustomerServiceImpl implements CustomerService {
     private final AuthenticationServiceFeignClient authFeignClient;
     private final CustomerDTOMapper customerDTOMapper;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<CustomerResponseDTO> getAllCustomers() {
 
         return customerRepository.findAllCustomers()

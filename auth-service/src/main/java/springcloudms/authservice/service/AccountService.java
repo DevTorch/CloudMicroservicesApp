@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface AccountService {
     Boolean isAccountExists(Long accountId);
-    Optional<AccountResponseDTO> findAccountById(Long accountId) throws AccountNotFoundException;
+    Optional<AccountResponseDTO> findAccountById(Long accountId);
     List<AccountResponseDTO> getAllAccounts();
     Optional<AccountResponseDTO> findAccountByCredentials(AccountLoginRequestDTO loginRequestDTO);
     void createNewAccount(AccountSignUpDTO accountSignUpDTO);

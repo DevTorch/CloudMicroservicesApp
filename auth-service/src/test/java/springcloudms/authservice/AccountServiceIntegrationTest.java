@@ -93,8 +93,6 @@ public class AccountServiceIntegrationTest extends AutServiceBaseContextClassTes
         accountService.createNewAccount(accountSignUpDTO);
 
         //Assert
-
-
         ConsumerRecord<String, CustomerCreateRequestEvent> message = records.poll(3000, TimeUnit.MILLISECONDS);
         assertNotNull(message);
 

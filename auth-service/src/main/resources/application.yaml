@@ -69,7 +69,7 @@ logging:
     org.springframework.transaction: DEBUG
     org.springframework.orm.jpa.JpaTransactionManager: DEBUG
     org.apache.kafka.clients.producer.internals.TransactionManager: DEBUG
-  file:
-    name: auth-service.log
+#  file:
+#    name: auth-service.log
 #    path: classpath:/resources/logs/auth-service.log
 

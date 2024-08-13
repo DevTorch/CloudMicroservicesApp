@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
 import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 
@@ -59,6 +60,7 @@ public abstract class BaseInventoryProductEntity {
     private Integer quantity;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @UpdateTimestamp
     private LocalDateTime lastStockUpdate;
 
     @NotNull

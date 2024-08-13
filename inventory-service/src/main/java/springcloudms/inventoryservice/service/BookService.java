@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public interface BookService extends AbstractService<BookResponseDTO, Long> {
+
     void saveBook(BookResponseDTO bookProductDTO) throws ExecutionException, InterruptedException, JsonProcessingException;
 
     void saveAll(List<BookEntity> bookEntities);

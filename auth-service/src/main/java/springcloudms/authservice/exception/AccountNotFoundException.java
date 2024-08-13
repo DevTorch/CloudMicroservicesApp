@@ -1,6 +1,6 @@
 package springcloudms.authservice.exception;
 
-public class AccountNotFoundException extends Exception {
+public class AccountNotFoundException extends RuntimeException {
     public AccountNotFoundException(Exception e) {
         super();
     }

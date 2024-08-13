@@ -15,6 +15,7 @@ public class KafkaMessageStorageServiceImpl implements KafkaMessageStorageServic
     private final KafkaMessageStorageRepository messageRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<CustomerProcessedEvents> findByMessageId(String messageId) {
         return Optional.ofNullable(messageRepository.findByMessageId(messageId));
     }

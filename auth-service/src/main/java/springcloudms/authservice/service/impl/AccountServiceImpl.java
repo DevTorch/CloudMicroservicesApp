@@ -47,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(value = "transactionManager", readOnly = true)
-    public Optional<AccountResponseDTO> findAccountById(Long accountId) throws AccountNotFoundException {
+    public Optional<AccountResponseDTO> findAccountById(Long accountId) {
 
         log.info("findAccountById: {}", accountRepository.findById(accountId));
 

@@ -1,6 +1,11 @@
 package springcloudms.productservice.model;
 
 import com.mongodb.lang.NonNull;
+import jakarta.validation.constraints.NegativeOrZero;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +34,7 @@ public class Book {
     @NonNull
     @Field("ISBN")
     private String isbnNo;
-    @NonNull
+    @NotEmpty
     @Field("author")
     private String author;
     @NonNull
@@ -48,6 +53,7 @@ public class Book {
     private Integer negativeFeedback;
     @Field("rating")
     private Double rating;
+    @PositiveOrZero
     @Field("stock")
     private Integer stock;
     @Field("image")

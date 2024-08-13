@@ -29,7 +29,7 @@ spring:
 #Kafka Consumer Config
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092,localhost:9094
+      bootstrap-servers: localhost:9092,localhost:9094,localhost:9096
       group-id: cloudmicroservices-consumer-group
       isolation-level: READ_COMMITTED
       auto-offset-reset: earliest

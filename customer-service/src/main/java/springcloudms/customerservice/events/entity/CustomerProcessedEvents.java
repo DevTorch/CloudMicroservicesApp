@@ -64,7 +64,8 @@ public class CustomerProcessedEvents {
 
     public CustomerProcessedEvents(String messageId,
                                    Long accountId,
-                                   String eventType, String eventBody,
+                                   String eventType,
+                                   String eventBody,
                                    LocalDateTime receivedTimeStamp) {
         this.messageId = messageId;
         this.accountId = accountId;
