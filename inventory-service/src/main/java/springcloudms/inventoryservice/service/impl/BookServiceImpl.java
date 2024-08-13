@@ -9,10 +9,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springcloudms.inventoryservice.domain.Book;
+import springcloudms.inventoryservice.domain.ProductId;
 import springcloudms.inventoryservice.events.AddNewBookEvent;
-import springcloudms.inventoryservice.exception.BookNotFoundException;
-import springcloudms.inventoryservice.exception.KafkaSenderException;
-import springcloudms.inventoryservice.model.BookEntity;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.repository.BookRepository;
@@ -22,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -35,26 +33,6 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
     @Override
-    public Optional<BookResponseDTO> findById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public BookResponseDTO save(BookResponseDTO entity) {
-        return null;
-    }
-
-    @Override
-    public BookResponseDTO update(BookResponseDTO entity) {
-        return null;
-    }
-
-    @Override
-    public void deleteById(Long id) {
-
-    }
-
-    @Override
     public boolean existsById(Long id) {
         return false;
     }
@@ -63,20 +41,19 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public void saveBook(BookResponseDTO bookResponseDTO) throws ExecutionException, InterruptedException, JsonProcessingException {
 
-        final BookEntity bookEntity = BookMapper.mapDtoToEntity(bookResponseDTO);
+        final Book book = BookMapper.mapDtoToEntity(bookResponseDTO);
 
-        bookRepository.save(bookEntity);
+        bookRepository.save(book);
 
-        log.info("Book saved successfully {}: ", new ObjectMapper().writeValueAsString(bookEntity));
+        log.info("Book saved successfully {}: ", new ObjectMapper().writeValueAsString(book));
 
         AddNewBookEvent event = new AddNewBookEvent(
-                bookEntity.getArticleNo(),
+                book.getArticleNo(),
                 bookResponseDTO.productType(),
                 bookResponseDTO.title(),
                 bookResponseDTO.author(),
                 bookResponseDTO.publisher(),
                 bookResponseDTO.isbnNo(),
-                bookResponseDTO.warehouse()
         );
 
         log.info("Event: {}", event);
@@ -119,7 +96,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void saveAll(List<BookEntity> bookEntities) {
+    public void saveAll(List<Book> bookEntities) {
         bookRepository.saveAll(bookEntities);
     }
 
@@ -132,30 +109,19 @@ public class BookServiceImpl implements BookService {
                 .toList();
     }
 
-    /**
-     * Finds a book by its article number.
-     *
-     * @param articleNo The article number of the book.
-     * @return An optional containing the book, if found, or an empty optional.
-     */
     @Override
-    public Optional<BookResponseDTO> findByArticleNo(String articleNo) {
-        var book = bookRepository.findByArticleNo(articleNo);
-        return book.map(bookMapper::toDto);
+    public Optional<BookResponseDTO> findByArticleNo(ProductId articleNo) {
+        return bookRepository.findByIsbn(articleNo).get().getArticleNo();
     }
 
     @Override
     public Boolean deleteByArticleNo(String articleNo) {
-        return bookRepository.deleteByArticleNo(articleNo);
+        return null;
     }
 
     @Override
     public Optional<String> getArticleNoByISBN(String isbnNo) {
-        if (bookRepository.findByIsbnNo(isbnNo).isPresent()) {
-            return Optional.of(bookRepository.findByIsbnNo(isbnNo).get().getArticleNo());
-        } else {
-            throw new BookNotFoundException(isbnNo);
-        }
+        return Optional.empty();
     }
 
 }

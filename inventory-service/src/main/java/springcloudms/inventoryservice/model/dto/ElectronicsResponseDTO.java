@@ -7,7 +7,6 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.Builder;
 import springcloudms.inventoryservice.model.enums.ElectronicCategoryEnum;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
-import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

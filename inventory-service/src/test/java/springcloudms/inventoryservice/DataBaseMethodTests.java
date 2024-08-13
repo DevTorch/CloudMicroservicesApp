@@ -1,25 +1,21 @@
 package springcloudms.inventoryservice;
 
 import jakarta.persistence.EntityManager;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.domain.Book;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
-import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 import springcloudms.inventoryservice.repository.BookRepository;
 import springcloudms.inventoryservice.service.BookService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 
 @SpringBootTest
 public class DataBaseMethodTests {
@@ -51,7 +47,7 @@ public class DataBaseMethodTests {
                 new BigDecimal("10.00")
         );
 
-        BookEntity book_one = new BookEntity();
+        Book book_one = new Book();
         book_one.setWarehouse(WarehousesEnum.WAREHOUSE_SEATTLE);
         book_one.setQuantity(55);
         book_one.setProductType(ProductTypeEnum.BOOKS);

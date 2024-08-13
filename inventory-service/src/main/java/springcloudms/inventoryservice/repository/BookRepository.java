@@ -2,25 +2,17 @@ package springcloudms.inventoryservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import springcloudms.inventoryservice.model.BookEntity;
-import springcloudms.inventoryservice.model.enums.WarehousesEnum;
+import springcloudms.inventoryservice.domain.Book;
+import springcloudms.inventoryservice.domain.ISBN;
+import springcloudms.inventoryservice.domain.ProductId;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends JpaRepository<BookEntity, Long> {
+public interface BookRepository extends JpaRepository<Book, Long> {
 
 
-//    void saveAll(List<BookEntity> bookProducts);
+    Boolean existsByArticleNoAndQuantity(ProductId articleNo, Integer quantity);
 
-    List<BookEntity> findAllByWarehouse(WarehousesEnum warehouse);
-
-    Boolean existsByArticleNoAndQuantity(String articleNo, Integer quantity);
-
-    Optional<BookEntity> findByArticleNo(String articleNo);
-
-    Boolean deleteByArticleNo(String articleNo);
-
-    Optional<BookEntity> findByIsbnNo(String isbnNo);
+    Optional<Book> findByIsbn(ISBN isbnNo);
 }

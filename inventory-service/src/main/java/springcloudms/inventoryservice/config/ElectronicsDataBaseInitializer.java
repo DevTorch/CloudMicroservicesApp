@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import springcloudms.inventoryservice.model.dto.ElectronicsResponseDTO;
 import springcloudms.inventoryservice.model.enums.ElectronicCategoryEnum;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
-import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 import springcloudms.inventoryservice.service.ElectronicsService;
 
 import java.math.BigDecimal;
@@ -26,7 +25,6 @@ public class ElectronicsDataBaseInitializer {
     private List<ElectronicsResponseDTO> initDatabase() {
 
         var electronicsResponseDTO_one = ElectronicsResponseDTO.builder()
-                .warehouse(WarehousesEnum.WAREHOUSE_LONDON)
                 .productType(ProductTypeEnum.ELECTRONICS)
                 .title("Apple iPhone")
                 .model("XX Red")
@@ -38,7 +36,6 @@ public class ElectronicsDataBaseInitializer {
                 .build();
 
         var electronicsResponseDTO_two = ElectronicsResponseDTO.builder()
-                .warehouse(WarehousesEnum.WAREHOUSE_LONDON)
                 .productType(ProductTypeEnum.ELECTRONICS)
                 .title("Xiaomi Redmi")
                 .model("XII Pro")
@@ -50,7 +47,6 @@ public class ElectronicsDataBaseInitializer {
                 .build();
 
         var electronicsResponseDTO_three = ElectronicsResponseDTO.builder()
-                .warehouse(WarehousesEnum.WAREHOUSE_LONDON)
                 .productType(ProductTypeEnum.ELECTRONICS)
                 .title("Samsung Galaxy")
                 .model("X Pro")
@@ -62,7 +58,6 @@ public class ElectronicsDataBaseInitializer {
                 .build();
 
         var electronicsResponseDTO_four = ElectronicsResponseDTO.builder()
-                .warehouse(WarehousesEnum.WAREHOUSE_LONDON)
                 .productType(ProductTypeEnum.ELECTRONICS)
                 .title("Sony Trinitron OLED")
                 .model("61\" OLED Smart-TV")
@@ -74,7 +69,6 @@ public class ElectronicsDataBaseInitializer {
                 .build();
 
         var electronicsResponseDTO_five = ElectronicsResponseDTO.builder()
-                .warehouse(WarehousesEnum.WAREHOUSE_LONDON)
                 .productType(ProductTypeEnum.ELECTRONICS)
                 .title("Apple MacBook")
                 .model("13 inch M2")

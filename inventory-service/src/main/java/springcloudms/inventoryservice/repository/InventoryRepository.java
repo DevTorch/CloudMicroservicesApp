@@ -3,10 +3,9 @@ package springcloudms.inventoryservice.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import springcloudms.inventoryservice.model.base.BaseInventoryProductEntity;
+import springcloudms.inventoryservice.domain.BaseInventoryProductEntity;
 import springcloudms.inventoryservice.model.dto.ProductResponseDTO;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

@@ -1,7 +1,7 @@
 package springcloudms.inventoryservice.model.mapper;
 
 import org.springframework.stereotype.Component;
-import springcloudms.inventoryservice.model.BookEntity;
+import springcloudms.inventoryservice.domain.Book;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 
 import java.time.LocalDateTime;
@@ -9,18 +9,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BookMapper implements Mappable<BookEntity, BookResponseDTO> {
+public class BookMapper implements Mappable<Book, BookResponseDTO> {
 
-    public BookEntity toEntity(BookResponseDTO dto) {
+    public Book toEntity(BookResponseDTO dto) {
 
         return mapDtoToEntity(dto);
     }
 
-    public static BookEntity mapDtoToEntity(BookResponseDTO dto) {
+    public static Book mapDtoToEntity(BookResponseDTO dto) {
 
-        BookEntity book = new BookEntity();
+        Book book = new Book();
         book.setArticleNo(dto.articleNo());
-        book.setWarehouse(dto.warehouse());
         book.setQuantity(dto.quantity());
         book.setProductType(dto.productType());
         book.setPurchasePrice(dto.purchasePrice());
@@ -32,14 +31,14 @@ public class BookMapper implements Mappable<BookEntity, BookResponseDTO> {
         return book;
     }
 
-    public List<BookEntity> toEntities(List<BookResponseDTO> dtos) {
+    public List<Book> toEntities(List<BookResponseDTO> dtos) {
 
         return dtos.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
     }
 
-    public BookResponseDTO toDto(BookEntity entity) {
+    public BookResponseDTO toDto(Book entity) {
         return new BookResponseDTO(
                 entity.getArticleNo(),
                 entity.getProductType(),
@@ -47,13 +46,12 @@ public class BookMapper implements Mappable<BookEntity, BookResponseDTO> {
                 entity.getAuthor(),
                 entity.getPublisher(),
                 entity.getIsbnNo(),
-                entity.getWarehouse(),
                 entity.getQuantity(),
                 entity.getPurchasePrice()
         );
     }
 
-    public List<BookResponseDTO> toDto(List<BookEntity> entities) {
+    public List<BookResponseDTO> toDto(List<Book> entities) {
         return List.of();
     }
 }

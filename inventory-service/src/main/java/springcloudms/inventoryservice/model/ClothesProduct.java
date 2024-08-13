@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import springcloudms.inventoryservice.model.base.BaseInventoryProductEntity;
+import springcloudms.inventoryservice.domain.BaseInventoryProductEntity;
 
 @Entity
 @Getter

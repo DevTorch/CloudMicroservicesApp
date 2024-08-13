@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springcloudms.inventoryservice.domain.ProductId;
 import springcloudms.inventoryservice.exception.KafkaSenderException;
-import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
+import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.service.BookService;
 
 import java.time.LocalDateTime;
@@ -111,7 +112,7 @@ public class BookController {
             @ApiResponse(responseCode = "404", description = "Книга с таким артикулом не найдена",
                     content = @Content)
     })
-    public ResponseEntity<BookResponseDTO> getBookResponseDTOByArticleNo(@PathVariable String articleNo) {
+    public ResponseEntity<BookResponseDTO> getBookResponseDTOByArticleNo(@PathVariable ProductId articleNo) {
         if (bookService.findByArticleNo(articleNo).isPresent()) {
             return ResponseEntity.ok(bookService.findByArticleNo(articleNo).get());
         } else {
@@ -120,7 +121,7 @@ public class BookController {
     }
 
     @PutMapping(value = "/{articleNo}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookResponseDTO> updateBook(@RequestBody BookResponseDTO bookResponseDTO, @PathVariable String articleNo) {
+    public ResponseEntity<BookResponseDTO> updateBook(@RequestBody BookResponseDTO bookResponseDTO, @PathVariable ProductId articleNo) {
 
         if (bookService.findByArticleNo(articleNo).isPresent()) {
             return ResponseEntity.ok(bookService.update(bookResponseDTO));

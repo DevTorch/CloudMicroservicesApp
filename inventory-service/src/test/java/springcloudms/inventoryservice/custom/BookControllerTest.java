@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
-import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 
 import java.math.BigDecimal;
 import java.util.UUID;

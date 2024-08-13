@@ -6,12 +6,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import springcloudms.inventoryservice.model.dto.BookResponseDTO;
 import springcloudms.inventoryservice.model.enums.ProductTypeEnum;
-import springcloudms.inventoryservice.model.enums.WarehousesEnum;
 import springcloudms.inventoryservice.model.mapper.BookMapper;
 import springcloudms.inventoryservice.service.BookService;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +33,6 @@ public class BookDataBaseInitializer {
                 "J.R.R. TolkienJ",
                 "Houghton Mifflin Harcourt",
                 "978-1-56619-909-9",
-                WarehousesEnum.WAREHOUSE_SEATTLE,
                 55,
                 new BigDecimal("10.00")
         );
@@ -47,7 +44,6 @@ public class BookDataBaseInitializer {
                 "J.R.R. Tolkien",
                 "Houghton Mifflin Harcourt",
                 "978-2-56619-909-9",
-                WarehousesEnum.WAREHOUSE_SEATTLE,
                 55,
                 new BigDecimal("10.00")
         );
@@ -59,7 +55,6 @@ public class BookDataBaseInitializer {
                 "J.R.R. Tolkien",
                 "Houghton Mifflin Harcourt",
                 "978-3-56619-909-9",
-                WarehousesEnum.WAREHOUSE_SEATTLE,
                 55,
                 new BigDecimal("100.00")
         );
@@ -71,7 +66,6 @@ public class BookDataBaseInitializer {
                 "J.R.R. Tolkien",
                 "Houghton Mifflin Harcourt",
                 "978-4-56619-909-9",
-                WarehousesEnum.WAREHOUSE_SEATTLE,
                 55,
                 new BigDecimal("100.00")
         );
@@ -83,7 +77,6 @@ public class BookDataBaseInitializer {
                 "J.R.R. Tolkien",
                 "Houghton Mifflin Harcourt",
                 "978-5-56619-909-9",
-                WarehousesEnum.WAREHOUSE_SEATTLE,
                 55,
                 new BigDecimal("90.00")
         );
@@ -95,7 +88,6 @@ public class BookDataBaseInitializer {
                 "J.D. Salinger",
                 "Houghton Mifflin Harcourt",
                 "978-6-56619-909-9",
-                WarehousesEnum.WAREHOUSE_SEATTLE,
                 55,
                 new BigDecimal("50.00")
         );
